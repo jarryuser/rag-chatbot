@@ -14,6 +14,7 @@ export default function App() {
 
   const [isLoading, setIsLoading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState(null)
+  const [urlIngestStatus, setUrlIngestStatus] = useState(null)
 
   // Current session object derived from state
   const currentSession = sessions.find(s => s.id === currentSessionId) ?? null
@@ -115,6 +116,41 @@ export default function App() {
       setUploadStatus('error')
       console.error(err)
       setTimeout(() => setUploadStatus(null), 4000)
+    }
+  }, [currentSessionId])
+
+  // ── Ingest URL handler ────────────────────────────────────────────────────
+  const handleIngestUrl = useCallback(async (url) => {
+    if (!currentSessionId || !url.trim()) return
+    setUrlIngestStatus('loading')
+    try {
+      const res = await fetch(
+        `${API}/api/ingest-url?session_id=${currentSessionId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url.trim() }),
+        }
+      )
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.detail || 'Ingest failed')
+
+      setSessions(prev => prev.map(s =>
+        s.id === currentSessionId
+          ? {
+              ...s,
+              documents: s.documents.includes(data.display_name)
+                ? s.documents
+                : [...s.documents, data.display_name],
+            }
+          : s
+      ))
+      setUrlIngestStatus('success')
+      setTimeout(() => setUrlIngestStatus(null), 3000)
+    } catch (err) {
+      setUrlIngestStatus('error')
+      console.error(err)
+      setTimeout(() => setUrlIngestStatus(null), 4000)
     }
   }, [currentSessionId])
 
@@ -226,6 +262,8 @@ export default function App() {
         onUpload={handleUpload}
         onDelete={handleDelete}
         uploadStatus={uploadStatus}
+        onIngestUrl={handleIngestUrl}
+        urlIngestStatus={urlIngestStatus}
       />
       <ChatWindow
         messages={messages}

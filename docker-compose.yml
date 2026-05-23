@@ -5,10 +5,19 @@ services:
       - "8000:8000"       # open http://localhost:8000 in your browser
     env_file:
       - .env              # reads GROQ_API_KEY from your local .env file
+    environment:
+      - OMP_NUM_THREADS=2        # limit PyTorch threads to prevent CPU saturation
+      - MKL_NUM_THREADS=2
+      - OPENBLAS_NUM_THREADS=2
+      - TOKENIZERS_PARALLELISM=false
     volumes:
       # Persist the ChromaDB vector store between container restarts
       # Without this volume every `docker compose down` would wipe your index
       - chroma_data:/app/chroma_db
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
     restart: unless-stopped
 
 volumes:

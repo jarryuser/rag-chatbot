@@ -30,7 +30,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-from rag import ingest, get_answer
+from rag import ingest, ingest_url, get_answer
 from rag.retriever import _get_embeddings
 
 load_dotenv()
@@ -84,6 +84,9 @@ class RenameSessionRequest(BaseModel):
 
 class AutoNameRequest(BaseModel):
     question: str   # first user message, used to generate a title
+
+class IngestUrlRequest(BaseModel):
+    url: str
 
 class ChatRequest(BaseModel):
     question: str
@@ -202,12 +205,12 @@ async def upload_document(
     if not session:
         raise HTTPException(status_code=404, detail="Session not found.")
 
-    allowed = {".pdf", ".txt", ".md"}
+    allowed = {".pdf", ".txt", ".md", ".docx", ".csv", ".xls", ".xlsx"}
     ext = Path(file.filename).suffix.lower()
     if ext not in allowed:
         raise HTTPException(
             status_code=400,
-            detail=f"Unsupported file type '{ext}'. Allowed: {', '.join(allowed)}"
+            detail=f"Unsupported file type '{ext}'. Allowed: {', '.join(sorted(allowed))}"
         )
 
     MAX_BYTES = 50 * 1024 * 1024  # 50 MB
@@ -236,6 +239,33 @@ async def upload_document(
         _save_sessions(sessions)
 
     return {"filename": file.filename, "chunks": n_chunks}
+
+
+@app.post("/api/ingest-url")
+async def ingest_url_endpoint(
+    req: IngestUrlRequest,
+    session_id: str = Query(..., description="Target session ID"),
+):
+    """Fetch a web page by URL and index its content into the specified session."""
+    sessions = _load_sessions()
+    session = next((s for s in sessions if s["id"] == session_id), None)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found.")
+
+    url = req.url.strip()
+    if not url.startswith(("http://", "https://")):
+        raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
+
+    try:
+        n_chunks, display_name = ingest_url(url, session_id=session_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if display_name not in session["documents"]:
+        session["documents"].append(display_name)
+        _save_sessions(sessions)
+
+    return {"display_name": display_name, "chunks": n_chunks}
 
 
 @app.delete("/api/documents/{filename}")

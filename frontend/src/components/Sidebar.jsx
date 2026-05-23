@@ -50,16 +50,35 @@ const ChatIcon = () => (
   </svg>
 )
 
+const GlobeIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+)
+
+const ArrowRightIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+)
+
 export default function Sidebar({
   sessions, currentSessionId,
   onSelectSession, onCreateSession, onRenameSession, onDeleteSession,
   documents, onUpload, onDelete, uploadStatus,
+  onIngestUrl, urlIngestStatus,
 }) {
   const inputRef = useRef(null)
   const [editingId, setEditingId] = useState(null)   // session being renamed
   const [editingName, setEditingName] = useState('')
   const [confirmDeleteSession, setConfirmDeleteSession] = useState(null)
   const [confirmDeleteDoc, setConfirmDeleteDoc] = useState(null)
+  const [urlInput, setUrlInput] = useState('')
 
   // File upload
   const handleFileChange = (e) => {
@@ -86,6 +105,14 @@ export default function Sidebar({
     } else {
       setConfirmDeleteSession(id)
       setTimeout(() => setConfirmDeleteSession(c => c === id ? null : c), 3000)
+    }
+  }
+
+  const handleUrlSubmit = (e) => {
+    e.preventDefault()
+    if (urlInput.trim()) {
+      onIngestUrl(urlInput.trim())
+      setUrlInput('')
     }
   }
 
@@ -193,13 +220,39 @@ export default function Sidebar({
         <p className="upload-label">
           {uploadStatus === 'uploading' ? 'Indexing…' : 'Click or drag file here'}
         </p>
-        <p className="upload-hint">PDF, TXT, MD · max 50 MB</p>
-        <input ref={inputRef} type="file" accept=".pdf,.txt,.md"
+        <p className="upload-hint">PDF, DOCX, TXT, MD, CSV, XLS · max 50 MB</p>
+        <input ref={inputRef} type="file" accept=".pdf,.docx,.txt,.md,.csv,.xls,.xlsx"
           className="hidden-input" onChange={handleFileChange} />
       </div>
 
       {uploadStatus === 'success' && <p className="status-badge success">✅ Indexed</p>}
       {uploadStatus === 'error'   && <p className="status-badge error">❌ Upload failed</p>}
+
+      {/* URL ingestion */}
+      <form className="url-ingest-form" onSubmit={handleUrlSubmit}>
+        <div className="url-ingest-row">
+          <GlobeIcon />
+          <input
+            className="url-ingest-input"
+            type="url"
+            placeholder="Paste URL to index…"
+            value={urlInput}
+            onChange={e => setUrlInput(e.target.value)}
+            disabled={urlIngestStatus === 'loading'}
+          />
+          <button
+            className="url-ingest-btn"
+            type="submit"
+            disabled={!urlInput.trim() || urlIngestStatus === 'loading'}
+            title="Index this URL"
+          >
+            <ArrowRightIcon />
+          </button>
+        </div>
+      </form>
+      {urlIngestStatus === 'loading' && <p className="status-badge">⏳ Fetching…</p>}
+      {urlIngestStatus === 'success' && <p className="status-badge success">✅ Indexed</p>}
+      {urlIngestStatus === 'error'   && <p className="status-badge error">❌ Failed</p>}
 
       {/* Document list for current session */}
       {documents.length > 0 && (

@@ -50,7 +50,7 @@ Answer + source citations
 | LLM | Llama 3.3 70B via Groq (free, no card) |
 | Embeddings | `all-MiniLM-L6-v2` via langchain-huggingface (local, free) |
 | Vector store | ChromaDB (persisted on disk, one directory per session) |
-| PDF parsing | pypdf |
+| Document parsing | pypdf, docx2txt, pandas + openpyxl, beautifulsoup4 |
 | Containerisation | Docker + docker-compose |
 
 ---
@@ -139,7 +139,8 @@ npm run dev   # opens http://localhost:5173 with hot reload
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/upload?session_id=` | Upload and index a document (PDF, TXT, MD, max 50 MB) |
+| `POST` | `/api/upload?session_id=` | Upload and index a document (PDF, DOCX, TXT, MD, CSV, XLS/XLSX, max 50 MB) |
+| `POST` | `/api/ingest-url?session_id=` | Fetch a web page by URL and index its content |
 | `DELETE` | `/api/documents/{filename}?session_id=` | Remove a document and all its chunks |
 
 **Chat**
@@ -190,9 +191,9 @@ Tunable constants (edit source files directly):
 - [x] Clear conversation button
 
 ### Phase 3 - More file formats
-- [ ] DOCX support via `Docx2txtLoader`
-- [ ] Web page ingestion - paste a URL, the page gets indexed
-- [ ] CSV / Excel with column-aware chunking
+- [x] DOCX support via `Docx2txtLoader`
+- [x] Web page ingestion - paste a URL, the page gets indexed
+- [x] CSV / Excel with column-aware chunking
 
 ### Phase 4 - Retrieval quality
 - [ ] Re-ranking - cross-encoder (`ms-marco-MiniLM-L-6-v2`) to re-score top-k chunks before the LLM sees them
