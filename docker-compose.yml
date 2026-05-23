@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"       # open http://localhost:8000 in your browser
+    env_file:
+      - .env              # reads GROQ_API_KEY from your local .env file
+    volumes:
+      # Persist the ChromaDB vector store between container restarts
+      # Without this volume every `docker compose down` would wipe your index
+      - chroma_data:/app/chroma_db
+    restart: unless-stopped
+
+volumes:
+  chroma_data:            # named volume managed by Docker

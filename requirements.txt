@@ -1,0 +1,26 @@
+# Core RAG stack - LangChain 0.3+ modular packages
+langchain-core>=0.3.0            # base interfaces: prompts, runnables, parsers
+langchain-community>=0.3.0       # document loaders, ChromaDB vectorstore
+langchain-groq>=0.2.0            # ChatGroq - free Groq API (llama, gemma, mixtral)
+langchain-huggingface>=0.1.0     # HuggingFaceEmbeddings (replaces deprecated langchain-community version)
+langchain-text-splitters>=0.3.0  # RecursiveCharacterTextSplitter
+
+# Vector store
+chromadb>=0.5.0
+
+# Document loaders
+pypdf>=4.2.0          # PDF support (used by PyPDFLoader)
+
+# Local embeddings (no API key needed - runs on CPU)
+sentence-transformers>=3.0.0
+
+# Token counting (still needed by langchain-openai internals)
+tiktoken>=0.7.0
+
+# Backend API
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9   # required by FastAPI for file uploads
+
+# Utilities
+python-dotenv>=1.0.1  # Load .env file
