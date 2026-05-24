@@ -19,6 +19,9 @@ openpyxl>=3.1.0       # Excel .xlsx support for pandas
 # Local embeddings (no API key needed - runs on CPU)
 sentence-transformers>=3.0.0
 
+# BM25 keyword search for hybrid retrieval
+rank-bm25>=0.2.2
+
 # Token counting (still needed by langchain-openai internals)
 tiktoken>=0.7.0
 
