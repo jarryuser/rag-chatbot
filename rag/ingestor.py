@@ -1,15 +1,24 @@
 """
-ingestor.py — Document loading and indexing pipeline.
+ingestor.py - Document loading and indexing pipeline.
 
 Flow:
-  file path → DocumentLoader → TextSplitter → Embeddings → ChromaDB
+  file path -> DocumentLoader -> parent split -> child split -> Embeddings -> ChromaDB
+                                      |
+                                      v
+                               parents.json (per session)
 
 Each session gets its own isolated ChromaDB directory:
   chroma_db/{session_id}/
-This means uploading a file to one chat never affects another chat.
+
+Child chunks (CHILD_CHUNK_SIZE chars) are stored in ChromaDB for precise
+similarity search. Each child carries a parent_id pointing to a larger
+parent chunk (PARENT_CHUNK_SIZE chars) saved in parents.json.
+On retrieval, child results are expanded to their parents so the LLM
+gets more context than the narrow search window provides.
 """
 
 import os
+import uuid
 from pathlib import Path
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
@@ -18,19 +27,18 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
-# Free local embeddings model — no API key required.
-# Must match the model used in retriever.py so vectors are compatible.
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+from .parents import load_parents, save_parents
 
-# Root directory for all ChromaDB data.
-# Each session lives in CHROMA_BASE_DIR/{session_id}/
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 CHROMA_BASE_DIR = "./chroma_db"
 
-# Chunk configuration
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
+# Parent chunks - larger context window passed to the LLM.
+PARENT_CHUNK_SIZE = 2000
 
-# Module-level singleton — loaded once, reused across all requests.
+# Child chunks - smaller units indexed in ChromaDB for precise retrieval.
+CHILD_CHUNK_SIZE = 400
+CHILD_CHUNK_OVERLAP = 50
+
 _embeddings: HuggingFaceEmbeddings | None = None
 
 
@@ -42,12 +50,10 @@ def _get_embeddings() -> HuggingFaceEmbeddings:
 
 
 def _chroma_dir(session_id: str) -> str:
-    """Return the ChromaDB directory for a given session."""
     return f"{CHROMA_BASE_DIR}/{session_id}"
 
 
 def _load_document(file_path: str) -> list[Document]:
-    """Load a document using the appropriate loader based on file extension."""
     ext = Path(file_path).suffix.lower()
     if ext == ".pdf":
         return PyPDFLoader(file_path).load()
@@ -82,6 +88,40 @@ def _load_tabular(file_path: str, ext: str) -> list[Document]:
     return docs
 
 
+_parent_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=PARENT_CHUNK_SIZE,
+    chunk_overlap=0,
+    separators=["\n\n", "\n", ".", " ", ""],
+)
+
+_child_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=CHILD_CHUNK_SIZE,
+    chunk_overlap=CHILD_CHUNK_OVERLAP,
+    separators=["\n\n", "\n", ".", " ", ""],
+)
+
+
+def _split_with_parents(docs: list[Document]) -> tuple[list[Document], dict[str, dict]]:
+    """
+    Split docs into parent chunks (for LLM context) and child chunks (for search).
+    Returns (child_chunks, parents_dict) where parents_dict maps parent_id -> {text, metadata}.
+    """
+    child_chunks = []
+    parents_dict = {}
+
+    for parent in _parent_splitter.split_documents(docs):
+        parent_id = str(uuid.uuid4())
+        parents_dict[parent_id] = {
+            "text": parent.page_content,
+            "metadata": parent.metadata,
+        }
+        for child in _child_splitter.split_documents([parent]):
+            child.metadata["parent_id"] = parent_id
+            child_chunks.append(child)
+
+    return child_chunks, parents_dict
+
+
 def ingest(file_path: str, display_name: str | None = None, session_id: str = "default") -> int:
     """
     Index a document into the ChromaDB collection for the given session.
@@ -89,41 +129,33 @@ def ingest(file_path: str, display_name: str | None = None, session_id: str = "d
     Args:
         file_path:    Path to the file on disk (may be a temp path).
         display_name: Human-readable filename shown in source citations.
-        session_id:   ID of the chat session — determines which ChromaDB
-                      sub-directory the chunks are stored in.
+        session_id:   ID of the chat session.
 
-    Returns the number of chunks stored.
+    Returns the number of child chunks stored.
     """
     label = display_name or Path(file_path).name
 
-    # 1. Load
     docs = _load_document(file_path)
-
-    # Overwrite 'source' metadata with the friendly display name so citations
-    # show "resume.pdf p.1" instead of a temp path like /var/folders/…
     for doc in docs:
         doc.metadata["source"] = label
 
-    # 2. Split
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE,
-        chunk_overlap=CHUNK_OVERLAP,
-        separators=["\n\n", "\n", ".", " ", ""],
-    )
-    chunks = splitter.split_documents(docs)
+    child_chunks, parents_dict = _split_with_parents(docs)
 
-    if not chunks:
+    if not child_chunks:
         raise ValueError("No text could be extracted from the document.")
 
-    # 3 & 4. Embed and store in this session's ChromaDB directory.
-    # Chroma 0.4+ auto-persists - no need to call .persist() manually.
+    # Merge new parents into the session store
+    existing = load_parents(session_id)
+    existing.update(parents_dict)
+    save_parents(session_id, existing)
+
     Chroma.from_documents(
-        documents=chunks,
+        documents=child_chunks,
         embedding=_get_embeddings(),
         persist_directory=_chroma_dir(session_id),
     )
 
-    return len(chunks)
+    return len(child_chunks)
 
 
 def ingest_url(url: str, session_id: str = "default") -> tuple[int, str]:
@@ -140,20 +172,19 @@ def ingest_url(url: str, session_id: str = "default") -> tuple[int, str]:
     for doc in docs:
         doc.metadata["source"] = display_name
 
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE,
-        chunk_overlap=CHUNK_OVERLAP,
-        separators=["\n\n", "\n", ".", " ", ""],
-    )
-    chunks = splitter.split_documents(docs)
+    child_chunks, parents_dict = _split_with_parents(docs)
 
-    if not chunks:
+    if not child_chunks:
         raise ValueError("No text content found at the given URL.")
 
+    existing = load_parents(session_id)
+    existing.update(parents_dict)
+    save_parents(session_id, existing)
+
     Chroma.from_documents(
-        documents=chunks,
+        documents=child_chunks,
         embedding=_get_embeddings(),
         persist_directory=_chroma_dir(session_id),
     )
 
-    return len(chunks), display_name
+    return len(child_chunks), display_name
