@@ -4,7 +4,8 @@ services:
     ports:
       - "8000:8000"       # open http://localhost:8000 in your browser
     env_file:
-      - .env              # reads GROQ_API_KEY from your local .env file
+      - path: .env
+        required: false   # allows running without .env (env vars can be set externally)
     environment:
       - OMP_NUM_THREADS=2        # limit PyTorch threads to prevent CPU saturation
       - MKL_NUM_THREADS=2
