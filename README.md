@@ -32,7 +32,10 @@ Embed question -> vector search (top-12) + BM25 keyword search (top-12)
 Reciprocal Rank Fusion -> merged candidate list (top-12)
         |
         v
-Cross-encoder re-ranking (ms-marco-MiniLM-L-6-v2) -> top-4 chunks
+Cross-encoder re-ranking (ms-marco-MiniLM-L-6-v2) -> top-4 child chunks
+        |
+        v
+Expand child chunks -> parent chunks (parents.json)
         |
         v
 Build message list: system prompt + conversation history + current question
@@ -70,8 +73,9 @@ rag-chatbot/
 ├── server.py                  # FastAPI app - REST API + serves built frontend
 ├── rag/
 │   ├── __init__.py            # exposes ingest() and get_answer()
-│   ├── ingestor.py            # load -> split -> embed -> store in ChromaDB
-│   ├── retriever.py           # hybrid search + re-ranking -> Groq LLM -> answer (LCEL)
+│   ├── ingestor.py            # load -> parent/child split -> embed -> store in ChromaDB
+│   ├── retriever.py           # hybrid search + re-ranking + parent expansion -> Groq LLM
+│   ├── parents.py             # shared helpers for parents.json (per-session parent store)
 │   └── prompts.py             # system message template
 ├── frontend/
 │   ├── src/
@@ -171,8 +175,9 @@ Tunable constants (edit source files directly):
 
 | File | Constant | Default | Effect |
 |---|---|---|---|
-| `ingestor.py` | `CHUNK_SIZE` | `1000` | Max characters per chunk |
-| `ingestor.py` | `CHUNK_OVERLAP` | `200` | Overlap between adjacent chunks |
+| `ingestor.py` | `PARENT_CHUNK_SIZE` | `2000` | Parent chunk size passed to the LLM |
+| `ingestor.py` | `CHILD_CHUNK_SIZE` | `400` | Child chunk size indexed in ChromaDB for search |
+| `ingestor.py` | `CHILD_CHUNK_OVERLAP` | `50` | Overlap between adjacent child chunks |
 | `retriever.py` | `TOP_K` | `4` | Chunks passed to the LLM after re-ranking |
 | `retriever.py` | `RERANK_CANDIDATES` | `12` | Candidates per search method (vector + BM25) before RRF and re-ranking |
 | `retriever.py` | `MAX_HISTORY` | `10` | Prior messages sent to the LLM |
@@ -207,7 +212,7 @@ Tunable constants (edit source files directly):
 ### Phase 4 - Retrieval quality
 - [x] Re-ranking - cross-encoder (`ms-marco-MiniLM-L-6-v2`) to re-score top-k chunks before the LLM sees them
 - [x] Hybrid search - combine ChromaDB vector search with BM25 keyword search
-- [ ] Parent-document retrieval - search small chunks, pass larger parent paragraphs to the LLM
+- [x] Parent-document retrieval - search small chunks, pass larger parent paragraphs to the LLM
 
 ### Phase 5 - Fully offline mode
 - [ ] Replace Groq with a local LLM via Ollama (Llama 3, Mistral, Phi-3)
