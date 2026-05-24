@@ -32,6 +32,7 @@ from dotenv import load_dotenv
 
 from rag import ingest, ingest_url, get_answer
 from rag.retriever import _get_embeddings, _get_reranker
+from rag.parents import drop_source_parents
 
 load_dotenv()
 
@@ -289,6 +290,7 @@ async def delete_document(
             embedding_function=_get_embeddings(),
         )
         vectorstore.delete(where={"source": filename})
+        drop_source_parents(session_id, filename)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete from vector store: {e}")
 
