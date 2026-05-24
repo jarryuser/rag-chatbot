@@ -1,8 +1,8 @@
 # RAG Chatbot
 
-A document question-answering chatbot with a custom React frontend and FastAPI backend. Upload PDFs or text files, ask questions - the bot retrieves the most relevant passages and answers using only the content of your documents.
+A document question-answering chatbot with a custom React frontend and FastAPI backend. Upload PDFs or text files, ask questions - the bot retrieves the most relevant passages and answers using only the content of your documents
 
-Embeddings run **locally** (no API key needed). The LLM uses **Groq's free tier** (Llama 3.3 70B). The whole stack runs in a single Docker container.
+Embeddings run **locally** (no API key needed). The LLM uses **Groq's free tier** (Llama 3.3 70B). The whole stack runs in a single Docker container
 
 ---
 
@@ -26,7 +26,13 @@ ChromaDB - persisted to disk, scoped per chat session
    on each question
         |
         v
-Embed question -> cosine similarity search -> top-4 chunks
+Embed question -> vector search (top-12) + BM25 keyword search (top-12)
+        |
+        v
+Reciprocal Rank Fusion -> merged candidate list (top-12)
+        |
+        v
+Cross-encoder re-ranking (ms-marco-MiniLM-L-6-v2) -> top-4 chunks
         |
         v
 Build message list: system prompt + conversation history + current question
@@ -49,6 +55,8 @@ Answer + source citations
 | LLM orchestration | LangChain 0.3 (LCEL) |
 | LLM | Llama 3.3 70B via Groq (free, no card) |
 | Embeddings | `all-MiniLM-L6-v2` via langchain-huggingface (local, free) |
+| Re-ranker | `ms-marco-MiniLM-L-6-v2` cross-encoder (local, free) |
+| Keyword search | BM25 via `rank-bm25`, fused with vector search using RRF |
 | Vector store | ChromaDB (persisted on disk, one directory per session) |
 | Document parsing | pypdf, docx2txt, pandas + openpyxl, beautifulsoup4 |
 | Containerisation | Docker + docker-compose |
@@ -63,7 +71,7 @@ rag-chatbot/
 ├── rag/
 │   ├── __init__.py            # exposes ingest() and get_answer()
 │   ├── ingestor.py            # load -> split -> embed -> store in ChromaDB
-│   ├── retriever.py           # similarity search -> Groq LLM -> answer (LCEL)
+│   ├── retriever.py           # hybrid search + re-ranking -> Groq LLM -> answer (LCEL)
 │   └── prompts.py             # system message template
 ├── frontend/
 │   ├── src/
@@ -99,10 +107,10 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Open [http://localhost:8000](http://localhost:8000). The React frontend and API are both served from the same port.
+Open [http://localhost:8000](http://localhost:8000). The React frontend and API are both served from the same port
 
-> First build takes ~5-10 min (downloads PyTorch CPU and the embedding model).
-> Subsequent builds are fast due to Docker layer caching.
+> First build takes ~5-10 min (downloads PyTorch CPU and both local models)
+> Subsequent builds are fast due to Docker layer caching
 
 ### Option B - Local development
 
@@ -165,7 +173,8 @@ Tunable constants (edit source files directly):
 |---|---|---|---|
 | `ingestor.py` | `CHUNK_SIZE` | `1000` | Max characters per chunk |
 | `ingestor.py` | `CHUNK_OVERLAP` | `200` | Overlap between adjacent chunks |
-| `retriever.py` | `TOP_K` | `4` | Chunks retrieved per question |
+| `retriever.py` | `TOP_K` | `4` | Chunks passed to the LLM after re-ranking |
+| `retriever.py` | `RERANK_CANDIDATES` | `12` | Candidates per search method (vector + BM25) before RRF and re-ranking |
 | `retriever.py` | `MAX_HISTORY` | `10` | Prior messages sent to the LLM |
 | `retriever.py` | `LLM_MODEL` | `llama-3.3-70b-versatile` | Groq model name |
 | `retriever.py` | `LLM_TEMPERATURE` | `0.0` | 0 = factual, 1 = creative |
@@ -196,8 +205,8 @@ Tunable constants (edit source files directly):
 - [x] CSV / Excel with column-aware chunking
 
 ### Phase 4 - Retrieval quality
-- [ ] Re-ranking - cross-encoder (`ms-marco-MiniLM-L-6-v2`) to re-score top-k chunks before the LLM sees them
-- [ ] Hybrid search - combine ChromaDB vector search with BM25 keyword search
+- [x] Re-ranking - cross-encoder (`ms-marco-MiniLM-L-6-v2`) to re-score top-k chunks before the LLM sees them
+- [x] Hybrid search - combine ChromaDB vector search with BM25 keyword search
 - [ ] Parent-document retrieval - search small chunks, pass larger parent paragraphs to the LLM
 
 ### Phase 5 - Fully offline mode
