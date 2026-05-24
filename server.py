@@ -31,7 +31,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 from rag import ingest, ingest_url, get_answer
-from rag.retriever import _get_embeddings
+from rag.retriever import _get_embeddings, _get_reranker
 
 load_dotenv()
 
@@ -40,9 +40,10 @@ app = FastAPI(title="RAG Chatbot API", version="2.0.0")
 
 @app.on_event("startup")
 async def warmup():
-    """Pre-load the embedding model so the first request doesn't stall."""
+    """Pre-load models so the first request doesn't stall."""
     _get_embeddings()
-    print("Embedding model loaded and ready.")
+    _get_reranker()
+    print("Embedding model and re-ranker loaded and ready.")
 
 
 app.add_middleware(
