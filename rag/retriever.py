@@ -26,6 +26,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.output_parsers import StrOutputParser
 
 from .prompts import SYSTEM_MESSAGE
+from .parents import load_parents
 
 CHROMA_BASE_DIR = "./chroma_db"
 
@@ -136,6 +137,28 @@ def _rerank(question: str, docs: list) -> list:
     return [doc for _, doc in ranked[:TOP_K]]
 
 
+def _resolve_parents(docs: list[Document], session_id: str) -> list[Document]:
+    """
+    Swap child chunks for their parent chunks where available.
+    Deduplicates by parent_id so the same parent isn't passed twice.
+    Falls back to the child chunk for sessions ingested before parent-child was added.
+    """
+    parents = load_parents(session_id)
+    result = []
+    seen: set[str] = set()
+
+    for doc in docs:
+        parent_id = doc.metadata.get("parent_id")
+        if parent_id and parent_id in parents and parent_id not in seen:
+            seen.add(parent_id)
+            entry = parents[parent_id]
+            result.append(Document(page_content=entry["text"], metadata=entry["metadata"]))
+        elif not parent_id or parent_id not in parents:
+            result.append(doc)
+
+    return result
+
+
 def _format_docs(docs: list) -> str:
     return "\n\n---\n\n".join(doc.page_content for doc in docs)
 
@@ -179,9 +202,10 @@ def get_answer(
             "No documents indexed in this chat yet. Please upload a file first."
         )
 
-    # Step 1: hybrid retrieval (vector + BM25 via RRF), then cross-encoder re-ranking.
+    # Step 1: hybrid retrieval (vector + BM25 via RRF), re-rank, then expand to parents.
     candidates = _hybrid_retrieve(question, vectorstore)
-    source_docs = _rerank(question, candidates) if len(candidates) > TOP_K else candidates
+    reranked = _rerank(question, candidates) if len(candidates) > TOP_K else candidates
+    source_docs = _resolve_parents(reranked, session_id)
     context = _format_docs(source_docs)
 
     # Step 2: build message list.
