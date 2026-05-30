@@ -41,7 +41,7 @@ Expand child chunks -> parent chunks (parents.json)
 Build message list: system prompt + conversation history + current question
         |
         v
-ChatGroq / Llama 3.3 70B (free tier, 30 req/min)
+ChatGroq / Llama 3.3 70B  OR  Ollama (local, fully offline)
         |
         v
 Answer + source citations
@@ -56,7 +56,7 @@ Answer + source citations
 | Frontend | React 18 + Vite |
 | Backend | FastAPI + Uvicorn |
 | LLM orchestration | LangChain 0.3 (LCEL) |
-| LLM | Llama 3.3 70B via Groq (free, no card) |
+| LLM | Llama 3.3 70B via Groq (default, free, no card) or any Ollama model (fully offline) |
 | Embeddings | `all-MiniLM-L6-v2` via langchain-huggingface (local, free) |
 | Re-ranker | `ms-marco-MiniLM-L-6-v2` cross-encoder (local, free) |
 | Keyword search | BM25 via `rank-bm25`, fused with vector search using RRF |
@@ -99,7 +99,7 @@ rag-chatbot/
 
 ## Quick Start
 
-### Option A - Docker (recommended, zero setup)
+### Option A - Docker with Groq (recommended, zero setup)
 
 ```bash
 git clone https://github.com/jarryuser/rag-chatbot.git && cd rag-chatbot
@@ -116,7 +116,25 @@ Open [http://localhost:8000](http://localhost:8000). The React frontend and API 
 > First build takes ~5-10 min (downloads PyTorch CPU and both local models)
 > Subsequent builds are fast due to Docker layer caching
 
-### Option B - Local development
+### Option B - Docker fully offline (Ollama, no API key)
+
+```bash
+cp .env.example .env
+# Edit .env:
+#   LLM_PROVIDER=ollama
+#   OLLAMA_HOST=http://ollama:11434
+#   OLLAMA_MODEL=llama3.2
+
+docker compose --profile offline up --build
+
+# Pull a model on first run (in a separate terminal)
+docker exec -it $(docker ps -qf name=ollama) ollama pull llama3.2
+```
+
+> Ollama model downloads happen at runtime, not during build.
+> `llama3.2` is ~2 GB. Larger models like `llama3.1:8b` give better answers but need more RAM
+
+### Option C - Local development
 
 **Backend:**
 ```bash
@@ -169,7 +187,10 @@ Copy `.env.example` to `.env` and fill in:
 
 | Variable | Description |
 |---|---|
-| `GROQ_API_KEY` | **Required.** Free key from [console.groq.com](https://console.groq.com) |
+| `LLM_PROVIDER` | `groq` (default) or `ollama` |
+| `GROQ_API_KEY` | **Required when `LLM_PROVIDER=groq`.** Free key from [console.groq.com](https://console.groq.com) |
+| `OLLAMA_HOST` | Ollama base URL. Use `http://ollama:11434` in Docker, `http://localhost:11434` locally |
+| `OLLAMA_MODEL` | Ollama model name (default: `llama3.2`). Any model available via `ollama pull` |
 
 Tunable constants (edit source files directly):
 
@@ -215,8 +236,8 @@ Tunable constants (edit source files directly):
 - [x] Parent-document retrieval - search small chunks, pass larger parent paragraphs to the LLM
 
 ### Phase 5 - Fully offline mode
-- [ ] Replace Groq with a local LLM via Ollama (Llama 3, Mistral, Phi-3)
-- [ ] GPU support flag in docker-compose for faster inference
+- [x] Replace Groq with a local LLM via Ollama (Llama 3, Mistral, Phi-3)
+- [x] GPU support flag in docker-compose for faster inference
 
 ### Phase 6 - Production
 - [ ] JWT-based user authentication
