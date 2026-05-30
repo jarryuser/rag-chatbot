@@ -16,9 +16,10 @@ Flow:
     -> StrOutputParser -> answer string
 """
 
+import os
+
 from rank_bm25 import BM25Okapi
 from sentence_transformers import CrossEncoder
-from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -41,9 +42,13 @@ RERANK_CANDIDATES = TOP_K * 3
 # 10 messages = ~5 conversation turns. Keeps token usage predictable.
 MAX_HISTORY = 10
 
-# Groq LLM - free tier, no credit card required.
+# Groq settings (used when LLM_PROVIDER=groq, the default).
 LLM_MODEL = "llama-3.3-70b-versatile"
 LLM_TEMPERATURE = 0.0
+
+# Ollama settings (used when LLM_PROVIDER=ollama).
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -159,6 +164,20 @@ def _resolve_parents(docs: list[Document], session_id: str) -> list[Document]:
     return result
 
 
+def _build_llm():
+    """Return the configured LLM - Groq (default) or Ollama for fully offline mode."""
+    provider = os.getenv("LLM_PROVIDER", "groq").lower()
+    if provider == "ollama":
+        from langchain_ollama import ChatOllama
+        return ChatOllama(
+            model=OLLAMA_MODEL,
+            base_url=OLLAMA_HOST,
+            temperature=LLM_TEMPERATURE,
+        )
+    from langchain_groq import ChatGroq
+    return ChatGroq(model=LLM_MODEL, temperature=LLM_TEMPERATURE)
+
+
 def _format_docs(docs: list) -> str:
     return "\n\n---\n\n".join(doc.page_content for doc in docs)
 
@@ -226,7 +245,7 @@ def get_answer(
     lc_messages.append(HumanMessage(content=question))
 
     # Step 3: LCEL chain - messages | llm | parser
-    llm = ChatGroq(model=LLM_MODEL, temperature=LLM_TEMPERATURE)
+    llm = _build_llm()
     chain = llm | StrOutputParser()
 
     answer = chain.invoke(lc_messages)

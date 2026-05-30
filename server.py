@@ -150,11 +150,11 @@ async def auto_name_session(session_id: str, req: AutoNameRequest):
         raise HTTPException(status_code=404, detail="Session not found.")
 
     try:
-        from langchain_groq import ChatGroq
         from langchain_core.messages import HumanMessage, SystemMessage
         from langchain_core.output_parsers import StrOutputParser
+        from rag.retriever import _build_llm
 
-        llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.3)
+        llm = _build_llm()
         chain = llm | StrOutputParser()
 
         name = chain.invoke([
