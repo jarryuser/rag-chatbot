@@ -2,18 +2,16 @@ services:
   app:
     build: .
     ports:
-      - "8000:8000"       # open http://localhost:8000 in your browser
+      - "8000:8000"
     env_file:
       - path: .env
-        required: false   # allows running without .env (env vars can be set externally)
+        required: false
     environment:
       - OMP_NUM_THREADS=2        # limit PyTorch threads to prevent CPU saturation
       - MKL_NUM_THREADS=2
       - OPENBLAS_NUM_THREADS=2
       - TOKENIZERS_PARALLELISM=false
     volumes:
-      # Persist the ChromaDB vector store between container restarts
-      # Without this volume every `docker compose down` would wipe your index
       - chroma_data:/app/chroma_db
     deploy:
       resources:
@@ -21,5 +19,26 @@ services:
           cpus: "2.0"
     restart: unless-stopped
 
+  # Offline LLM backend - started with: docker compose --profile offline up
+  # Set LLM_PROVIDER=ollama and OLLAMA_HOST=http://ollama:11434 in .env
+  # After first start, pull a model: docker exec -it <ollama-container> ollama pull llama3.2
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["offline"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    # Uncomment to enable GPU acceleration (requires NVIDIA Container Toolkit):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
 volumes:
-  chroma_data:            # named volume managed by Docker
+  chroma_data:
+  ollama_data:
