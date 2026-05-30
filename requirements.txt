@@ -1,7 +1,8 @@
 # Core RAG stack - LangChain 0.3+ modular packages
 langchain-core>=0.3.0            # base interfaces: prompts, runnables, parsers
 langchain-community>=0.3.0       # document loaders, ChromaDB vectorstore
-langchain-groq>=0.2.0            # ChatGroq - free Groq API (llama, gemma, mixtral)
+langchain-groq>=0.2.0            # ChatGroq - Groq API (llama, gemma, mixtral)
+langchain-ollama>=0.2.0          # ChatOllama - local LLM via Ollama (fully offline)
 langchain-huggingface>=0.1.0     # HuggingFaceEmbeddings (replaces deprecated langchain-community version)
 langchain-text-splitters>=0.3.0  # RecursiveCharacterTextSplitter
 
