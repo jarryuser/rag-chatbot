@@ -12,6 +12,7 @@ Endpoints:
     DELETE /api/sessions/{id} - delete session and its documents
     POST   /api/upload?session_id= - upload and index a document
     POST   /api/chat - ask a question (session_id + optional history)
+    POST   /api/chat/stream - same, but streams tokens via Server-Sent Events
     DELETE /api/documents/{filename}?session_id= - remove a document from a session
 """
 
@@ -26,12 +27,12 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
 from rag import ingest, ingest_url, get_answer
-from rag.retriever import _get_embeddings, _get_reranker
+from rag.retriever import _get_embeddings, _get_reranker, stream_answer
 from rag.parents import drop_source_parents
 
 load_dotenv()
@@ -320,6 +321,34 @@ async def chat(req: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
     return ChatResponse(answer=result["answer"], sources=result["sources"])
+
+
+@app.post("/api/chat/stream")
+async def chat_stream(req: ChatRequest):
+    """Streaming version of /api/chat — returns tokens via Server-Sent Events."""
+    if not req.question.strip():
+        raise HTTPException(status_code=400, detail="Question must not be empty.")
+
+    sessions = _load_sessions()
+    if not any(s["id"] == req.session_id for s in sessions):
+        raise HTTPException(status_code=404, detail="Session not found.")
+
+    async def generate():
+        try:
+            async for event in stream_answer(
+                req.question, session_id=req.session_id, history=req.history
+            ):
+                yield f"data: {json.dumps(event)}\n\n"
+        except RuntimeError as e:
+            yield f"data: {json.dumps({'type': 'error', 'detail': str(e)})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'detail': str(e)})}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 
 # Serve built React frontend

@@ -17,6 +17,7 @@ Flow:
 """
 
 import os
+import asyncio
 
 from rank_bm25 import BM25Okapi
 from sentence_transformers import CrossEncoder
@@ -255,3 +256,49 @@ def get_answer(
         "sources": _build_sources(source_docs),
         "source_documents": source_docs,
     }
+
+
+async def stream_answer(
+    question: str,
+    session_id: str = "default",
+    history: list[dict] | None = None,
+):
+    """
+    Streaming version of get_answer. Yields SSE-ready dicts:
+      {"type": "token",  "content": str}  - one per LLM chunk
+      {"type": "done",   "sources": str}  - final event with citations
+      {"type": "error",  "detail": str}   - on failure
+
+    Retrieval (ChromaDB + BM25 + cross-encoder) runs in a threadpool
+    so it doesn't block the event loop while waiting for embeddings/reranker.
+    """
+    def _retrieve():
+        vs = _load_vectorstore(session_id)
+        if vs._collection.count() == 0:
+            raise RuntimeError(
+                "No documents indexed in this chat yet. Please upload a file first."
+            )
+        candidates = _hybrid_retrieve(question, vs)
+        reranked = _rerank(question, candidates) if len(candidates) > TOP_K else candidates
+        return _resolve_parents(reranked, session_id)
+
+    source_docs = await asyncio.to_thread(_retrieve)
+    context = _format_docs(source_docs)
+
+    lc_messages: list = [SystemMessage(content=SYSTEM_MESSAGE.format(context=context))]
+    for msg in (history or [])[-MAX_HISTORY:]:
+        role = msg.get("role", "user")
+        content = msg.get("content", "")
+        if role == "user":
+            lc_messages.append(HumanMessage(content=content))
+        else:
+            lc_messages.append(AIMessage(content=content))
+    lc_messages.append(HumanMessage(content=question))
+
+    llm = _build_llm()
+    chain = llm | StrOutputParser()
+
+    async for chunk in chain.astream(lc_messages):
+        yield {"type": "token", "content": chunk}
+
+    yield {"type": "done", "sources": _build_sources(source_docs)}
