@@ -178,6 +178,7 @@ npm run dev   # opens http://localhost:5173 with hot reload
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/chat` | Ask a question - body: `{question, session_id, history[]}` |
+| `POST` | `/api/chat/stream` | Same, but streams tokens via Server-Sent Events |
 
 ---
 
@@ -242,9 +243,9 @@ Tunable constants (edit source files directly):
 ### Phase 6 - Production
 - [ ] JWT-based user authentication
 - [ ] Per-user document namespaces in ChromaDB
-- [ ] Streaming responses (Server-Sent Events)
+- [x] Streaming responses (Server-Sent Events)
 - [ ] Deploy to Railway / Render / Hugging Face Spaces
-- [ ] GitHub Actions CI - lint + Docker build check on every PR
+- [x] GitHub Actions CI - lint + Docker build check on every PR
 
 ---
 
