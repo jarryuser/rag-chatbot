@@ -409,6 +409,21 @@ html, body, #root {
   40% { transform: translateY(-6px); opacity: 1; }
 }
 
+.streaming-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--text-muted);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.7s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Chat input bar */
 .chat-input-bar {
   padding: 16px 24px 20px;

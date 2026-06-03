@@ -60,7 +60,7 @@ export default function ChatWindow({ messages, isLoading, onSend, sessionName, o
           <MessageBubble key={i} message={msg} />
         ))}
 
-        {isLoading && <ThinkingIndicator />}
+        {isLoading && !messages.some(m => m.streaming) && <ThinkingIndicator />}
 
         {/* Invisible anchor for auto-scroll */}
         <div ref={bottomRef} />

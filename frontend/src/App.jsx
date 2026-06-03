@@ -181,64 +181,111 @@ export default function App() {
   const handleSend = useCallback(async (question) => {
     if (!question.trim() || isLoading || !currentSessionId) return
 
-    // Snapshot history *before* appending the new message — this is what
-    // gets sent to the backend as conversational context.
     const priorMessages = (chatHistory[currentSessionId] ?? [])
       .slice(-10)
       .map(({ role, content }) => ({ role, content }))
 
-    // Remember whether this is the first message in a "New Chat" session
-    // so we can auto-name it after the response arrives.
     const isFirstMessage =
       priorMessages.length === 0 &&
       (sessions.find(s => s.id === currentSessionId)?.name ?? '') === 'New Chat'
 
-    const userMsg = { role: 'user', content: question }
+    const sessionId = currentSessionId
+
     setChatHistory(prev => ({
       ...prev,
-      [currentSessionId]: [...(prev[currentSessionId] ?? []), userMsg],
+      [sessionId]: [...(prev[sessionId] ?? []), { role: 'user', content: question }],
     }))
     setIsLoading(true)
 
     try {
-      const res = await fetch(`${API}/api/chat`, {
+      const res = await fetch(`${API}/api/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          question,
-          session_id: currentSessionId,
-          history: priorMessages,
-        }),
+        body: JSON.stringify({ question, session_id: sessionId, history: priorMessages }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || 'Request failed')
 
-      setChatHistory(prev => ({
-        ...prev,
-        [currentSessionId]: [
-          ...(prev[currentSessionId] ?? []),
-          { role: 'assistant', content: data.answer, sources: data.sources },
-        ],
-      }))
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.detail || 'Request failed')
+      }
 
-      // Auto-name the session after the very first exchange
-      if (isFirstMessage) {
-        fetch(`${API}/api/sessions/${currentSessionId}/auto-name`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question }),
-        })
-          .then(r => r.ok ? r.json() : null)
-          .then(updated => {
-            if (updated) setSessions(prev => prev.map(s => s.id === currentSessionId ? updated : s))
-          })
-          .catch(() => {})
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let firstToken = true
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const parts = buffer.split('\n\n')
+        buffer = parts.pop()
+
+        for (const part of parts) {
+          const line = part.trim()
+          if (!line.startsWith('data: ')) continue
+          let event
+          try { event = JSON.parse(line.slice(6)) } catch { continue }
+
+          if (event.type === 'token') {
+            if (firstToken) {
+              firstToken = false
+              setIsLoading(false)
+              setChatHistory(prev => ({
+                ...prev,
+                [sessionId]: [
+                  ...(prev[sessionId] ?? []),
+                  { role: 'assistant', content: event.content, sources: '', streaming: true },
+                ],
+              }))
+            } else {
+              setChatHistory(prev => {
+                const msgs = prev[sessionId] ?? []
+                const last = msgs[msgs.length - 1]
+                return {
+                  ...prev,
+                  [sessionId]: [
+                    ...msgs.slice(0, -1),
+                    { ...last, content: last.content + event.content },
+                  ],
+                }
+              })
+            }
+          } else if (event.type === 'done') {
+            setChatHistory(prev => {
+              const msgs = prev[sessionId] ?? []
+              const last = msgs[msgs.length - 1]
+              return {
+                ...prev,
+                [sessionId]: [
+                  ...msgs.slice(0, -1),
+                  { ...last, sources: event.sources, streaming: false },
+                ],
+              }
+            })
+            if (isFirstMessage) {
+              fetch(`${API}/api/sessions/${sessionId}/auto-name`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question }),
+              })
+                .then(r => r.ok ? r.json() : null)
+                .then(updated => {
+                  if (updated) setSessions(prev => prev.map(s => s.id === sessionId ? updated : s))
+                })
+                .catch(() => {})
+            }
+          } else if (event.type === 'error') {
+            throw new Error(event.detail)
+          }
+        }
       }
     } catch (err) {
       setChatHistory(prev => ({
         ...prev,
-        [currentSessionId]: [
-          ...(prev[currentSessionId] ?? []),
+        [sessionId]: [
+          ...(prev[sessionId] ?? []),
           { role: 'assistant', content: `Error: ${err.message}`, isError: true },
         ],
       }))

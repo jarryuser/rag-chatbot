@@ -17,6 +17,9 @@ export default function MessageBubble({ message }) {
             ? <p>{message.content}</p>
             : <ReactMarkdown>{message.content}</ReactMarkdown>
           }
+          {!isUser && message.streaming && (
+            <span className="streaming-cursor" aria-hidden="true" />
+          )}
         </div>
 
         {/* Sources citation shown below assistant messages */}
