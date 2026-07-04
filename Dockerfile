@@ -43,8 +43,6 @@ RUN chmod +x start.sh
 
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-VOLUME ["/app/chroma_db"]
-
 EXPOSE 8000
 
 CMD ["./start.sh"]
