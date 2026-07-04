@@ -38,7 +38,8 @@ CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2'); \
 print('Re-ranker model cached OK')"
 
 COPY rag/     ./rag/
-COPY server.py .
+COPY server.py start.sh ./
+RUN chmod +x start.sh
 
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
@@ -46,4 +47,4 @@ VOLUME ["/app/chroma_db"]
 
 EXPOSE 8000
 
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./start.sh"]
