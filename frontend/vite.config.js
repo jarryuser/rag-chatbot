@@ -3,6 +3,12 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.test.jsx'],
+    pool: 'forks',
+    poolOptions: { forks: { singleFork: true } },
+  },
   server: {
     // Proxy /api/* calls from Vite dev server to the FastAPI backend
     // so you don't need to configure CORS for production

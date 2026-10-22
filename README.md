@@ -2,7 +2,7 @@
 
 A document question-answering chatbot with a custom React frontend and FastAPI backend. Upload PDFs or text files, ask questions - the bot retrieves the most relevant passages and answers using only the content of your documents
 
-Embeddings run **locally** (no API key needed). The LLM uses **Groq's free tier** (Llama 3.3 70B). The whole stack runs in a single Docker container
+Embeddings run **locally** (no API key needed). The LLM uses **Groq's free tier** (Qwen 3.8 27B). The whole stack runs in a single Docker container
 
 ---
 
@@ -15,7 +15,7 @@ Upload PDF / TXT / MD
 DocumentLoader (PyPDFLoader / TextLoader)
         |
         v
-RecursiveCharacterTextSplitter (chunk_size=1000, overlap=200)
+RecursiveCharacterTextSplitter (parents=2000 chars, children=400 chars, overlap=50)
         |
         v
 HuggingFaceEmbeddings (all-MiniLM-L6-v2, runs on CPU, free)
@@ -41,7 +41,7 @@ Expand child chunks -> parent chunks (parents.json)
 Build message list: system prompt + conversation history + current question
         |
         v
-ChatGroq / Llama 3.3 70B  OR  Ollama (local, fully offline)
+ChatGroq / Qwen 3.8 27B  OR  Ollama (local, fully offline)
         |
         v
 Answer + source citations
@@ -56,7 +56,7 @@ Answer + source citations
 | Frontend | React 18 + Vite |
 | Backend | FastAPI + Uvicorn |
 | LLM orchestration | LangChain 0.3 (LCEL) |
-| LLM | Llama 3.3 70B via Groq (default, free, no card) or any Ollama model (fully offline) |
+| LLM | Qwen 3.8 27B via Groq (default, free, no card) or any Ollama model (fully offline) |
 | Embeddings | `all-MiniLM-L6-v2` via langchain-huggingface (local, free) |
 | Re-ranker | `ms-marco-MiniLM-L-6-v2` cross-encoder (local, free) |
 | Keyword search | BM25 via `rank-bm25`, fused with vector search using RRF |
@@ -189,6 +189,7 @@ Copy `.env.example` to `.env` and fill in:
 | Variable | Description |
 |---|---|
 | `LLM_PROVIDER` | `groq` (default) or `ollama` |
+| `LLM_MODEL` | Optional Groq model override (default: `qwen/qwen3.8-27b`) |
 | `GROQ_API_KEY` | **Required when `LLM_PROVIDER=groq`.** Free key from [console.groq.com](https://console.groq.com) |
 | `OLLAMA_HOST` | Ollama base URL. Use `http://ollama:11434` in Docker, `http://localhost:11434` locally |
 | `OLLAMA_MODEL` | Ollama model name (default: `llama3.2`). Any model available via `ollama pull` |
@@ -203,7 +204,7 @@ Tunable constants (edit source files directly):
 | `retriever.py` | `TOP_K` | `4` | Chunks passed to the LLM after re-ranking |
 | `retriever.py` | `RERANK_CANDIDATES` | `12` | Candidates per search method (vector + BM25) before RRF and re-ranking |
 | `retriever.py` | `MAX_HISTORY` | `10` | Prior messages sent to the LLM |
-| `retriever.py` | `LLM_MODEL` | `llama-3.3-70b-versatile` | Groq model name |
+| `retriever.py` | `LLM_MODEL` | `qwen/qwen3.8-27b` | Groq model name |
 | `retriever.py` | `LLM_TEMPERATURE` | `0.0` | 0 = factual, 1 = creative |
 
 ---
@@ -213,7 +214,7 @@ Tunable constants (edit source files directly):
 ### Done
 - [x] RAG pipeline: load -> split -> embed -> retrieve -> answer
 - [x] Local embeddings - `all-MiniLM-L6-v2`, no API key, runs on CPU
-- [x] Free LLM - Groq (Llama 3.3 70B), no credit card required
+- [x] Free LLM - Groq (Qwen 3.8 27B), no credit card required
 - [x] Custom React + FastAPI frontend (replaced Streamlit)
 - [x] Multi-document support per session
 - [x] Per-file delete - removes chunks from ChromaDB by source metadata
@@ -252,3 +253,61 @@ Tunable constants (edit source files directly):
 ## License
 
 MIT
+
+
+## Reliability and resource limits
+
+Run a single Uvicorn worker, as configured by `start.sh`; mutation and processing limits are per process
+
+- Chat history is saved in this browser's local storage, with up to 200 recent messages per session restored after reload
+- History is not synchronized between browsers or devices and is removed when browser site data is cleared
+- Stop cancels the active response and keeps the partial text; interrupted replies are excluded from subsequent model context
+- A CPU task already running at cancellation may finish in the background; its processing slot stays reserved until it finishes
+- Document mutations already started finish even if the requesting client disconnects
+- Session deletion accepts only existing UUID sessions and rejects symlink directories
+- Uploads are copied in bounded blocks with a 50 MB file limit; incoming request bodies are also bounded
+- Each document is limited to 2 million extracted characters; each session is limited to 20 document entries and 10,000 indexed child chunks
+- The application allows up to 50 sessions, one heavy processing task at a time, and two streaming answers
+- Questions are limited to 4,000 characters, history to 10 messages of up to 12,000 characters each, and generated answers to 1,024 tokens
+- Streaming answers have a 120-second timeout
+- URL import accepts public HTTP(S) pages on standard ports, checks every redirect, pins connections to a validated public IP, and limits downloads to 2 MB
+- URL import accepts HTML and plain text with uncompressed responses, up to three redirects, a 10-second socket timeout, and a 30-second download budget
+
+These limits target personal use; authentication and per-user authorization are still required before sharing private documents through a public deployment
+
+## Regression tests
+
+The regression suite uses temporary data and substitutes model calls, so it requires neither model downloads nor provider credentials
+
+```bash
+pip install -r requirements-test.txt
+python -m unittest discover -s tests -v
+cd frontend
+npm test
+npm run build
+```
+
+Real document parsing, embedding inference, and provider integration still require the full dependencies from `requirements.txt` and a separate end-to-end check
+
+
+## Source passages
+
+Answers include numbered references such as `[1]`; selecting a reference opens the corresponding source passage below the answer
+
+Each passage includes the exact text supplied to the model, the source name, and a page or row number where available; PDF pages use one-based numbering
+
+Source passages are saved with chat history and remain available after reload, including for stopped replies once retrieval has finished
+
+The source panel shows retrieved evidence, not an independent verification that every generated claim is correct; older saved answers retain their original source labels without fabricated excerpts
+
+## Live integration check
+
+The optional live check creates a synthetic three-page PDF in a temporary directory, indexes it with the real embedding and reranking models, checks streaming and regular provider answers, and closes an active stream
+
+```bash
+python scripts/check_live.py
+```
+
+This check requires full project dependencies, model downloads on the first run, and a working configured provider; it sends only synthetic test content and uses the provider's existing quota
+
+`npm test` also checks the React workflow in a simulated DOM: upload, answer, source inspection, Stop, clearing, and restoring the selected conversation and its passages after remount
