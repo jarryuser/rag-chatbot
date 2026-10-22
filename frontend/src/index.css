@@ -488,3 +488,5 @@ html, body, #root {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+.app-notice { padding: 12px 24px; color: #fbbf24; background: var(--surface); }

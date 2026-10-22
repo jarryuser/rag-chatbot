@@ -17,18 +17,21 @@ Flow:
 """
 
 import os
-import asyncio
+from contextlib import aclosing
+from pathlib import Path
 
 from rank_bm25 import BM25Okapi
 from sentence_transformers import CrossEncoder
 from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.output_parsers import StrOutputParser
 
 from .prompts import SYSTEM_MESSAGE
 from .parents import load_parents
+from .embeddings import _get_embeddings
+from .limits import MAX_ANSWER_TOKENS, run_work
+from .storage import session_directory
 
 CHROMA_BASE_DIR = "./chroma_db"
 
@@ -47,23 +50,10 @@ MAX_HISTORY = 10
 LLM_MODEL = "llama-3.3-70b-versatile"
 LLM_TEMPERATURE = 0.0
 
-# Ollama settings (used when LLM_PROVIDER=ollama).
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 # Singletons loaded once at startup.
-_embeddings: HuggingFaceEmbeddings | None = None
 _reranker: CrossEncoder | None = None
-
-
-def _get_embeddings() -> HuggingFaceEmbeddings:
-    global _embeddings
-    if _embeddings is None:
-        _embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    return _embeddings
 
 
 def _get_reranker() -> CrossEncoder:
@@ -74,7 +64,7 @@ def _get_reranker() -> CrossEncoder:
 
 
 def _chroma_dir(session_id: str) -> str:
-    return f"{CHROMA_BASE_DIR}/{session_id}"
+    return str(session_directory(Path(CHROMA_BASE_DIR), session_id, allow_default=True))
 
 
 def _load_vectorstore(session_id: str) -> Chroma:
@@ -171,12 +161,14 @@ def _build_llm():
     if provider == "ollama":
         from langchain_ollama import ChatOllama
         return ChatOllama(
-            model=OLLAMA_MODEL,
-            base_url=OLLAMA_HOST,
+            model=os.getenv("OLLAMA_MODEL", "llama3.2"),
+            num_predict=MAX_ANSWER_TOKENS,
+            base_url=os.getenv("OLLAMA_HOST", "http://localhost:11434"),
             temperature=LLM_TEMPERATURE,
         )
     from langchain_groq import ChatGroq
-    return ChatGroq(model=LLM_MODEL, temperature=LLM_TEMPERATURE)
+    return ChatGroq(model=os.getenv("LLM_MODEL", LLM_MODEL), temperature=LLM_TEMPERATURE,
+                    max_tokens=MAX_ANSWER_TOKENS, timeout=60, max_retries=1)
 
 
 def _format_docs(docs: list) -> str:
@@ -282,7 +274,7 @@ async def stream_answer(
         reranked = _rerank(question, candidates) if len(candidates) > TOP_K else candidates
         return _resolve_parents(reranked, session_id)
 
-    source_docs = await asyncio.to_thread(_retrieve)
+    source_docs = await run_work(_retrieve)
     context = _format_docs(source_docs)
 
     lc_messages: list = [SystemMessage(content=SYSTEM_MESSAGE.format(context=context))]
@@ -298,7 +290,8 @@ async def stream_answer(
     llm = _build_llm()
     chain = llm | StrOutputParser()
 
-    async for chunk in chain.astream(lc_messages):
-        yield {"type": "token", "content": chunk}
+    async with aclosing(chain.astream(lc_messages)) as chunks:
+        async for chunk in chunks:
+            yield {"type": "token", "content": chunk}
 
     yield {"type": "done", "sources": _build_sources(source_docs)}

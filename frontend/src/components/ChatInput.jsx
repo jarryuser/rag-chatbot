@@ -8,7 +8,7 @@ const SendIcon = () => (
   </svg>
 )
 
-export default function ChatInput({ onSend, isLoading }) {
+export default function ChatInput({ onSend, isLoading, onStop }) {
   const [text, setText] = useState('')
   const textareaRef = useRef(null)
 
@@ -48,16 +48,18 @@ export default function ChatInput({ onSend, isLoading }) {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           rows={1}
+          maxLength={4000}
           disabled={isLoading}
         />
-        <button
-          className="send-btn"
-          onClick={submit}
-          disabled={!text.trim() || isLoading}
-          aria-label="Send"
-        >
-          <SendIcon />
-        </button>
+        {isLoading ? (
+          <button className="send-btn" onClick={onStop} aria-label="Stop response">
+            Stop
+          </button>
+        ) : (
+          <button className="send-btn" onClick={submit} disabled={!text.trim()} aria-label="Send">
+            <SendIcon />
+          </button>
+        )}
       </div>
       <p className="input-hint">Enter to send · Shift+Enter for new line</p>
     </div>

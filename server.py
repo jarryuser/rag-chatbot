@@ -17,27 +17,69 @@ Endpoints:
 """
 
 import os
+import asyncio
+import logging
+from contextlib import aclosing
+from functools import wraps
+from threading import BoundedSemaphore
+from typing import Literal
 import uuid
 import json
 import shutil
 import tempfile
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
 from rag import ingest, ingest_url, get_answer
 from rag.retriever import _get_embeddings, _get_reranker, stream_answer
 from rag.parents import drop_source_parents
+from rag.storage import session_directory, write_json
+from rag.http_limits import RequestSizeLimit
+from rag.limits import (MAX_UPLOAD_BYTES, MAX_DOCUMENTS_PER_SESSION, MAX_SESSIONS,
+                        ResourceLimitError, run_work)
 
 load_dotenv()
 
 app = FastAPI(title="RAG Chatbot API", version="2.0.0")
+logger = logging.getLogger(__name__)
+_mutation_lock = asyncio.Lock()
+_chat_slots = BoundedSemaphore(2)
+_mutation_tasks = set()
+
+
+def serialized_mutation(endpoint):
+    @wraps(endpoint)
+    async def guarded(*args, **kwargs):
+        if _mutation_lock.locked():
+            raise HTTPException(status_code=429, detail="Another update is in progress. Try again shortly.")
+        await _mutation_lock.acquire()
+
+        async def execute():
+            try:
+                return await endpoint(*args, **kwargs)
+            except ResourceLimitError as exc:
+                raise HTTPException(status_code=429, detail=str(exc)) from exc
+            finally:
+                _mutation_lock.release()
+
+        task = asyncio.create_task(execute())
+        _mutation_tasks.add(task)
+
+        def completed(done):
+            _mutation_tasks.discard(done)
+            if not done.cancelled():
+                done.exception()
+
+        task.add_done_callback(completed)
+        return await asyncio.shield(task)
+    return guarded
 
 
 @app.on_event("startup")
@@ -59,6 +101,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(RequestSizeLimit)
+
 # Session persistence - stored in chroma_db/sessions.json.
 # Each session has its own chroma_db/{session_id}/ directory for vectors.
 
@@ -68,39 +112,46 @@ SESSIONS_FILE = CHROMA_BASE / "sessions.json"
 
 def _load_sessions() -> list[dict]:
     if SESSIONS_FILE.exists():
-        return json.loads(SESSIONS_FILE.read_text())
+        return json.loads(SESSIONS_FILE.read_text(encoding="utf-8"))
     return []
 
 
 def _save_sessions(sessions: list[dict]) -> None:
-    CHROMA_BASE.mkdir(parents=True, exist_ok=True)
-    SESSIONS_FILE.write_text(json.dumps(sessions, indent=2))
+    write_json(SESSIONS_FILE, sessions)
 
 
 def _session_chroma_dir(session_id: str) -> Path:
-    return CHROMA_BASE / session_id
+    try:
+        return session_directory(CHROMA_BASE, session_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 # Models
 
 class CreateSessionRequest(BaseModel):
-    name: str = "New Chat"
+    name: str = Field(default="New Chat", min_length=1, max_length=100)
 
 class RenameSessionRequest(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=100)
 
 class AutoNameRequest(BaseModel):
-    question: str   # first user message, used to generate a title
+    question: str = Field(min_length=1, max_length=4000)
 
 class IngestUrlRequest(BaseModel):
-    url: str
+    url: str = Field(min_length=1, max_length=2048)
+
+class HistoryMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=12000)
+
 
 class ChatRequest(BaseModel):
-    question: str
+    question: str = Field(min_length=1, max_length=4000)
     session_id: str
     # Prior turns for conversational memory.
     # Each entry: {"role": "user"|"assistant", "content": str}
-    history: list[dict] = []
+    history: list[HistoryMessage] = Field(default_factory=list, max_length=10)
 
 class ChatResponse(BaseModel):
     answer: str
@@ -116,21 +167,25 @@ async def list_sessions():
 
 
 @app.post("/api/sessions", status_code=201)
+@serialized_mutation
 async def create_session(req: CreateSessionRequest):
     """Create a new named session. Returns the new session object."""
     session = {
         "id": str(uuid.uuid4()),
         "name": req.name,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "documents": [],
     }
     sessions = _load_sessions()
+    if len(sessions) >= MAX_SESSIONS:
+        raise HTTPException(status_code=429, detail="Maximum of 50 sessions reached.")
     sessions.insert(0, session)  # newest first
     _save_sessions(sessions)
     return session
 
 
 @app.patch("/api/sessions/{session_id}")
+@serialized_mutation
 async def rename_session(session_id: str, req: RenameSessionRequest):
     """Rename an existing session."""
     sessions = _load_sessions()
@@ -143,6 +198,7 @@ async def rename_session(session_id: str, req: RenameSessionRequest):
 
 
 @app.post("/api/sessions/{session_id}/auto-name")
+@serialized_mutation
 async def auto_name_session(session_id: str, req: AutoNameRequest):
     """
     Generate a short title (3-5 words) for a session using the LLM,
@@ -162,7 +218,7 @@ async def auto_name_session(session_id: str, req: AutoNameRequest):
         llm = _build_llm()
         chain = llm | StrOutputParser()
 
-        name = chain.invoke([
+        name = await chain.ainvoke([
             SystemMessage(content=(
                 "Create a very short chat title (3-5 words, no quotes, "
                 "no trailing punctuation) that captures the topic of the user's question. "
@@ -181,19 +237,20 @@ async def auto_name_session(session_id: str, req: AutoNameRequest):
 
 
 @app.delete("/api/sessions/{session_id}")
+@serialized_mutation
 async def delete_session(session_id: str):
     """
     Delete a session and all documents indexed in it.
     Returns the updated sessions list so the frontend can sync in one round-trip.
     """
+    chroma_dir = _session_chroma_dir(session_id)
     sessions = _load_sessions()
+    if not any(s["id"] == session_id for s in sessions):
+        raise HTTPException(status_code=404, detail="Session not found.")
+    if chroma_dir.exists():
+        await run_work(shutil.rmtree, chroma_dir)
     sessions = [s for s in sessions if s["id"] != session_id]
     _save_sessions(sessions)
-
-    # Remove the session's ChromaDB directory
-    chroma_dir = _session_chroma_dir(session_id)
-    if chroma_dir.exists():
-        shutil.rmtree(chroma_dir)
 
     return {"sessions": sessions}
 
@@ -201,6 +258,7 @@ async def delete_session(session_id: str):
 # Document endpoints
 
 @app.post("/api/upload")
+@serialized_mutation
 async def upload_document(
     file: UploadFile = File(...),
     session_id: str = Query(..., description="Target session ID"),
@@ -213,32 +271,40 @@ async def upload_document(
         raise HTTPException(status_code=404, detail="Session not found.")
 
     allowed = {".pdf", ".txt", ".md", ".docx", ".csv", ".xls", ".xlsx"}
-    ext = Path(file.filename).suffix.lower()
+    ext = Path(file.filename or "").suffix.lower()
     if ext not in allowed:
         raise HTTPException(
             status_code=400,
             detail=f"Unsupported file type '{ext}'. Allowed: {', '.join(sorted(allowed))}"
         )
 
-    MAX_BYTES = 50 * 1024 * 1024  # 50 MB
-    content = await file.read()
-    if len(content) > MAX_BYTES:
-        raise HTTPException(
-            status_code=413,
-            detail=f"File too large ({len(content) // (1024*1024)} MB). Max is 50 MB."
-        )
+    if len(session["documents"]) >= MAX_DOCUMENTS_PER_SESSION:
+        raise HTTPException(status_code=429, detail="Maximum of 20 documents per session reached.")
 
-    # Save to temp file, index, then delete
-    with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
-        tmp.write(content)
-        tmp_path = tmp.name
-
+    tmp_path = None
     try:
-        n_chunks = ingest(tmp_path, display_name=file.filename, session_id=session_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
+            tmp_path = tmp.name
+            size = 0
+            while content := await file.read(64 * 1024):
+                size += len(content)
+                if size > MAX_UPLOAD_BYTES:
+                    raise HTTPException(status_code=413, detail="File too large. Maximum is 50 MB.")
+                tmp.write(content)
+        n_chunks = await run_work(ingest, tmp_path, display_name=file.filename, session_id=session_id)
+    except ResourceLimitError as exc:
+        raise HTTPException(status_code=429, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Document indexing failed")
+        raise HTTPException(status_code=500, detail="Could not index the document.") from exc
     finally:
-        os.unlink(tmp_path)
+        await file.close()
+        if tmp_path:
+            os.unlink(tmp_path)
 
     # Update document list in session
     if file.filename not in session["documents"]:
@@ -249,6 +315,7 @@ async def upload_document(
 
 
 @app.post("/api/ingest-url")
+@serialized_mutation
 async def ingest_url_endpoint(
     req: IngestUrlRequest,
     session_id: str = Query(..., description="Target session ID"),
@@ -263,10 +330,17 @@ async def ingest_url_endpoint(
     if not url.startswith(("http://", "https://")):
         raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
 
+    if len(session["documents"]) >= MAX_DOCUMENTS_PER_SESSION:
+        raise HTTPException(status_code=429, detail="Maximum of 20 documents per session reached.")
     try:
-        n_chunks, display_name = ingest_url(url, session_id=session_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        n_chunks, display_name = await run_work(ingest_url, url, session_id=session_id)
+    except ResourceLimitError as exc:
+        raise HTTPException(status_code=429, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("URL indexing failed")
+        raise HTTPException(status_code=500, detail="Could not index the web page.") from exc
 
     if display_name not in session["documents"]:
         session["documents"].append(display_name)
@@ -276,6 +350,7 @@ async def ingest_url_endpoint(
 
 
 @app.delete("/api/documents/{filename}")
+@serialized_mutation
 async def delete_document(
     filename: str,
     session_id: str = Query(..., description="Session the document belongs to"),
@@ -289,15 +364,21 @@ async def delete_document(
         raise HTTPException(status_code=404, detail="Session not found.")
 
     chroma_dir = str(_session_chroma_dir(session_id))
-    try:
+    def remove_document():
         vectorstore = Chroma(
             persist_directory=chroma_dir,
             embedding_function=_get_embeddings(),
         )
         vectorstore.delete(where={"source": filename})
         drop_source_parents(session_id, filename)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete from vector store: {e}")
+
+    try:
+        await run_work(remove_document)
+    except ResourceLimitError:
+        raise
+    except Exception as exc:
+        logger.exception("Document deletion failed")
+        raise HTTPException(status_code=500, detail="Could not delete the document.") from exc
 
     session["documents"] = [d for d in session["documents"] if d != filename]
     _save_sessions(sessions)
@@ -318,11 +399,15 @@ async def chat(req: ChatRequest):
         raise HTTPException(status_code=404, detail="Session not found.")
 
     try:
-        result = get_answer(req.question, session_id=req.session_id, history=req.history)
+        result = await run_work(get_answer, req.question, session_id=req.session_id,
+                                history=[msg.model_dump() for msg in req.history])
+    except ResourceLimitError as exc:
+        raise HTTPException(status_code=429, detail=str(exc)) from exc
     except RuntimeError as e:
         raise HTTPException(status_code=422, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as exc:
+        logger.exception("Chat failed")
+        raise HTTPException(status_code=500, detail="Could not generate an answer.") from exc
 
     return ChatResponse(answer=result["answer"], sources=result["sources"])
 
@@ -338,15 +423,28 @@ async def chat_stream(req: ChatRequest):
         raise HTTPException(status_code=404, detail="Session not found.")
 
     async def generate():
+        if not _chat_slots.acquire(blocking=False):
+            yield f"data: {json.dumps({'type': 'error', 'detail': 'Too many active answers. Try again shortly.'})}\n\n"
+            return
         try:
-            async for event in stream_answer(
-                req.question, session_id=req.session_id, history=req.history
-            ):
-                yield f"data: {json.dumps(event)}\n\n"
+            async with asyncio.timeout(120):
+                async with aclosing(stream_answer(
+                    req.question, session_id=req.session_id,
+                    history=[msg.model_dump() for msg in req.history]
+                )) as events:
+                    async for event in events:
+                        yield f"data: {json.dumps(event)}\n\n"
+        except TimeoutError:
+            yield f"data: {json.dumps({'type': 'error', 'detail': 'Answer timed out. Please try again.'})}\n\n"
         except RuntimeError as e:
             yield f"data: {json.dumps({'type': 'error', 'detail': str(e)})}\n\n"
-        except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'detail': str(e)})}\n\n"
+        except ResourceLimitError as exc:
+            yield f"data: {json.dumps({'type': 'error', 'detail': str(exc)})}\n\n"
+        except Exception:
+            logger.exception("Streaming answer failed")
+            yield f"data: {json.dumps({'type': 'error', 'detail': 'Could not generate an answer.'})}\n\n"
+        finally:
+            _chat_slots.release()
 
     return StreamingResponse(
         generate(),

@@ -14,11 +14,13 @@ more context than the narrow search window provides.
 import json
 from pathlib import Path
 
+from .storage import session_directory, write_json
+
 CHROMA_BASE_DIR = "./chroma_db"
 
 
 def _parents_path(session_id: str) -> Path:
-    return Path(f"{CHROMA_BASE_DIR}/{session_id}/parents.json")
+    return session_directory(Path(CHROMA_BASE_DIR), session_id, allow_default=True) / "parents.json"
 
 
 def load_parents(session_id: str) -> dict[str, dict]:
@@ -28,8 +30,7 @@ def load_parents(session_id: str) -> dict[str, dict]:
 
 def save_parents(session_id: str, parents: dict[str, dict]) -> None:
     path = _parents_path(session_id)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(parents))
+    write_json(path, parents)
 
 
 def drop_source_parents(session_id: str, source: str) -> None:

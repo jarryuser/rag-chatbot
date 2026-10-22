@@ -17,19 +17,20 @@ On retrieval, child results are expanded to their parents so the LLM
 gets more context than the narrow search window provides.
 """
 
-import os
 import uuid
 from pathlib import Path
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
 from .parents import load_parents, save_parents
+from .embeddings import _get_embeddings
+from .limits import MAX_DOCUMENT_CHARS, MAX_CHUNKS_PER_SESSION, ResourceLimitError
+from .storage import session_directory
+from .web import fetch_page
 
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 CHROMA_BASE_DIR = "./chroma_db"
 
 # Parent chunks - larger context window passed to the LLM.
@@ -39,18 +40,20 @@ PARENT_CHUNK_SIZE = 2000
 CHILD_CHUNK_SIZE = 400
 CHILD_CHUNK_OVERLAP = 50
 
-_embeddings: HuggingFaceEmbeddings | None = None
-
-
-def _get_embeddings() -> HuggingFaceEmbeddings:
-    global _embeddings
-    if _embeddings is None:
-        _embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    return _embeddings
-
 
 def _chroma_dir(session_id: str) -> str:
-    return f"{CHROMA_BASE_DIR}/{session_id}"
+    return str(session_directory(Path(CHROMA_BASE_DIR), session_id, allow_default=True))
+
+
+def _check_document(docs):
+    if sum(len(doc.page_content) for doc in docs) > MAX_DOCUMENT_CHARS:
+        raise ResourceLimitError("Document exceeds the 2 million character limit.")
+
+
+def _check_capacity(session_id, chunks):
+    store = Chroma(persist_directory=_chroma_dir(session_id), embedding_function=_get_embeddings())
+    if store._collection.count() + len(chunks) > MAX_CHUNKS_PER_SESSION:
+        raise ResourceLimitError("Session exceeds the 10,000 chunk limit.")
 
 
 def _load_document(file_path: str) -> list[Document]:
@@ -139,10 +142,13 @@ def ingest(file_path: str, display_name: str | None = None, session_id: str = "d
     for doc in docs:
         doc.metadata["source"] = label
 
+    _check_document(docs)
     child_chunks, parents_dict = _split_with_parents(docs)
 
     if not child_chunks:
         raise ValueError("No text could be extracted from the document.")
+
+    _check_capacity(session_id, child_chunks)
 
     # Merge new parents into the session store
     existing = load_parents(session_id)
@@ -160,22 +166,23 @@ def ingest(file_path: str, display_name: str | None = None, session_id: str = "d
 
 def ingest_url(url: str, session_id: str = "default") -> tuple[int, str]:
     """Fetch a web page and index it. Returns (n_chunks, display_name)."""
-    from langchain_community.document_loaders import WebBaseLoader
+    from bs4 import BeautifulSoup
 
-    loader = WebBaseLoader(web_path=url)
-    docs = loader.load()
-
-    if not docs:
-        raise ValueError("No content could be extracted from the URL.")
-
-    display_name = (docs[0].metadata.get("title") or "").strip() or url
-    for doc in docs:
-        doc.metadata["source"] = display_name
-
+    content, final_url = fetch_page(url)
+    soup = BeautifulSoup(content, "html.parser")
+    display_name = soup.title.get_text(strip=True) if soup.title else final_url
+    display_name = display_name[:255] or final_url
+    for element in soup(["script", "style", "nav", "footer"]):
+        element.decompose()
+    text = soup.get_text(separator="\n", strip=True)
+    docs = [Document(page_content=text, metadata={"source": display_name, "url": final_url})]
+    _check_document(docs)
     child_chunks, parents_dict = _split_with_parents(docs)
 
     if not child_chunks:
         raise ValueError("No text content found at the given URL.")
+
+    _check_capacity(session_id, child_chunks)
 
     existing = load_parents(session_id)
     existing.update(parents_dict)

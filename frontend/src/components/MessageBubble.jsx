@@ -22,6 +22,8 @@ export default function MessageBubble({ message }) {
           )}
         </div>
 
+        {message.stopped && <p className="sources">Response stopped</p>}
+
         {/* Sources citation shown below assistant messages */}
         {!isUser && message.sources && (
           <p className="sources">

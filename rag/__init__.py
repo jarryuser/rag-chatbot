@@ -1,7 +1,19 @@
-# RAG Chatbot - rag package
-# Exposes the two main entry points: ingest() and get_answer()
+"""Public entry points; model dependencies load only when needed."""
 
-from .ingestor import ingest, ingest_url
-from .retriever import get_answer
+
+def ingest(file_path, display_name=None, session_id="default"):
+    from .ingestor import ingest as run
+    return run(file_path, display_name=display_name, session_id=session_id)
+
+
+def ingest_url(url, session_id="default"):
+    from .ingestor import ingest_url as run
+    return run(url, session_id=session_id)
+
+
+def get_answer(question, session_id="default", history=None):
+    from .retriever import get_answer as run
+    return run(question, session_id=session_id, history=history)
+
 
 __all__ = ["ingest", "ingest_url", "get_answer"]

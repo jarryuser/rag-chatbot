@@ -21,7 +21,7 @@ const ThinkingIndicator = () => (
   </div>
 )
 
-export default function ChatWindow({ messages, isLoading, onSend, sessionName, onClearChat }) {
+export default function ChatWindow({ messages, isLoading, onSend, sessionName, onClearChat, onStop, notice }) {
   const bottomRef = useRef(null)
 
   // Auto-scroll to the latest message
@@ -46,6 +46,7 @@ export default function ChatWindow({ messages, isLoading, onSend, sessionName, o
         )}
       </div>
 
+      {notice && <p className="app-notice" role="alert">{notice}</p>}
       <div className="messages-area">
         {messages.length === 0 && !isLoading && (
           <div className="empty-state">
@@ -56,17 +57,17 @@ export default function ChatWindow({ messages, isLoading, onSend, sessionName, o
           </div>
         )}
 
-        {messages.map((msg, i) => (
-          <MessageBubble key={i} message={msg} />
+        {messages.filter(msg => msg.content).map((msg, i) => (
+          <MessageBubble key={msg.id || i} message={msg} />
         ))}
 
-        {isLoading && !messages.some(m => m.streaming) && <ThinkingIndicator />}
+        {isLoading && !messages.some(m => m.streaming && m.content) && <ThinkingIndicator />}
 
         {/* Invisible anchor for auto-scroll */}
         <div ref={bottomRef} />
       </div>
 
-      <ChatInput onSend={onSend} isLoading={isLoading} />
+      <ChatInput onSend={onSend} isLoading={isLoading} onStop={onStop} />
     </main>
   )
 }
