@@ -12,6 +12,7 @@ export function loadHistory(storage) {
       .slice(-MAX_MESSAGES)
       .map(m => ({ ...m, id: m.id || crypto.randomUUID(), streaming: false,
         stopped: Boolean(m.stopped || m.streaming),
+        citations: normalizeCitations(m.citations),
         content: m.content || 'Response interrupted. Please try again.',
       }))]))
 }
@@ -61,6 +62,19 @@ export async function* readEvents(body) {
   }
 }
 
+
+export function normalizeCitations(citations) {
+  if (!Array.isArray(citations)) return []
+  return citations.filter(citation => citation && Number.isInteger(citation.id) && citation.id > 0 &&
+    typeof citation.source === 'string' && typeof citation.text === 'string')
+    .slice(0, 12).map(citation => ({
+      ...citation,
+      page: Number.isInteger(citation.page) ? citation.page : null,
+      page_label: typeof citation.page_label === 'string' ? citation.page_label : null,
+      row: Number.isInteger(citation.row) ? citation.row : null,
+      url: typeof citation.url === 'string' && /^https?:\/\//.test(citation.url) ? citation.url : null,
+    }))
+}
 
 export function restoreSession(storage, sessions) {
   let saved

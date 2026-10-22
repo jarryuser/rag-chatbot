@@ -28,6 +28,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.output_parsers import StrOutputParser
 
 from .prompts import SYSTEM_MESSAGE
+from .citations import build_citations, format_context, format_sources
 from .parents import load_parents
 from .embeddings import _get_embeddings
 from .limits import MAX_ANSWER_TOKENS, run_work
@@ -47,7 +48,7 @@ RERANK_CANDIDATES = TOP_K * 3
 MAX_HISTORY = 10
 
 # Groq settings (used when LLM_PROVIDER=groq, the default).
-LLM_MODEL = "llama-3.3-70b-versatile"
+LLM_MODEL = "qwen/qwen3.8-27b"
 LLM_TEMPERATURE = 0.0
 
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -99,12 +100,13 @@ def _rrf(lists: list[list[Document]], k: int = 60) -> list[Document]:
     Reciprocal Rank Fusion over multiple ranked lists.
     score(d) = sum(1 / (k + rank)) across all lists that contain d.
     """
-    scores: dict[str, float] = {}
-    doc_map: dict[str, Document] = {}
+    scores: dict[tuple, float] = {}
+    doc_map: dict[tuple, Document] = {}
 
     for ranked in lists:
         for rank, doc in enumerate(ranked):
-            key = doc.page_content
+            key = (doc.metadata.get("source"), doc.metadata.get("page"),
+                   doc.metadata.get("parent_id"), doc.page_content)
             if key not in doc_map:
                 scores[key] = 0.0
                 doc_map[key] = doc
@@ -172,21 +174,11 @@ def _build_llm():
 
 
 def _format_docs(docs: list) -> str:
-    return "\n\n---\n\n".join(doc.page_content for doc in docs)
+    return format_context(docs)
 
 
 def _build_sources(docs: list) -> str:
-    seen = set()
-    parts = []
-    for doc in docs:
-        ref = (
-            f"{doc.metadata.get('source', 'unknown')} "
-            f"p.{doc.metadata.get('page', '?')}"
-        )
-        if ref not in seen:
-            seen.add(ref)
-            parts.append(ref)
-    return ", ".join(parts)
+    return format_sources(docs)
 
 
 def get_answer(
@@ -247,6 +239,7 @@ def get_answer(
         "answer": answer.strip(),
         "sources": _build_sources(source_docs),
         "source_documents": source_docs,
+        "citations": build_citations(source_docs),
     }
 
 
@@ -275,6 +268,9 @@ async def stream_answer(
         return _resolve_parents(reranked, session_id)
 
     source_docs = await run_work(_retrieve)
+    citations = build_citations(source_docs)
+    sources = _build_sources(source_docs)
+    yield {"type": "sources", "sources": sources, "citations": citations}
     context = _format_docs(source_docs)
 
     lc_messages: list = [SystemMessage(content=SYSTEM_MESSAGE.format(context=context))]
@@ -294,4 +290,4 @@ async def stream_answer(
         async for chunk in chunks:
             yield {"type": "token", "content": chunk}
 
-    yield {"type": "done", "sources": _build_sources(source_docs)}
+    yield {"type": "done", "sources": sources, "citations": citations}

@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import Sidebar from './components/Sidebar.jsx'
 import ChatWindow from './components/ChatWindow.jsx'
 
-import { loadHistory, saveHistory, updateMessage, readEvents, restoreSession, ACTIVE_SESSION_KEY } from './chat.js'
+import { loadHistory, saveHistory, updateMessage, readEvents, normalizeCitations, restoreSession, ACTIVE_SESSION_KEY } from './chat.js'
 
 const API = ''
 
@@ -268,11 +268,14 @@ export default function App() {
       let completed = false
       for await (const event of readEvents(res.body)) {
         if (controller.signal.aborted) throw new DOMException('Stopped', 'AbortError')
-        if (event.type === 'token') {
+        if (event.type === 'sources') {
+          update(message => ({ ...message, sources: event.sources, citations: normalizeCitations(event.citations) }))
+        } else if (event.type === 'token') {
           update(message => ({ ...message, content: message.content + event.content }))
         } else if (event.type === 'done') {
           completed = true
-          update(message => ({ ...message, sources: event.sources, streaming: false }))
+          update(message => ({ ...message, sources: event.sources,
+            citations: event.citations ? normalizeCitations(event.citations) : message.citations, streaming: false }))
           break
         } else if (event.type === 'error') {
           throw new Error(event.detail)

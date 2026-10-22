@@ -153,9 +153,20 @@ class ChatRequest(BaseModel):
     # Each entry: {"role": "user"|"assistant", "content": str}
     history: list[HistoryMessage] = Field(default_factory=list, max_length=10)
 
+class SourceExcerpt(BaseModel):
+    id: int
+    source: str
+    text: str
+    page: int | None = None
+    page_label: str | None = None
+    row: int | None = None
+    url: str | None = None
+
+
 class ChatResponse(BaseModel):
     answer: str
     sources: str
+    citations: list[SourceExcerpt] = Field(default_factory=list)
 
 
 # Session endpoints
@@ -409,7 +420,8 @@ async def chat(req: ChatRequest):
         logger.exception("Chat failed")
         raise HTTPException(status_code=500, detail="Could not generate an answer.") from exc
 
-    return ChatResponse(answer=result["answer"], sources=result["sources"])
+    return ChatResponse(answer=result["answer"], sources=result["sources"],
+                        citations=result.get("citations", []))
 
 
 @app.post("/api/chat/stream")
