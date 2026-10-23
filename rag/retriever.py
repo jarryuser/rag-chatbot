@@ -12,7 +12,7 @@ Flow:
     -> cross-encoder re-ranking -> top TOP_K chunks
     -> format context string
     -> build message list: [SystemMessage] + prior turns + HumanMessage
-    -> ChatGroq / Llama 3.3 70B
+    -> configured Groq or Ollama model
     -> StrOutputParser -> answer string
 """
 
@@ -28,6 +28,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.output_parsers import StrOutputParser
 
 from .prompts import SYSTEM_MESSAGE
+from .queries import MAX_HISTORY, retrieval_query
 from .citations import build_citations, format_context, format_sources
 from .parents import load_parents
 from .indexing import recover_index
@@ -43,10 +44,6 @@ TOP_K = 4
 # How many candidates to fetch from ChromaDB before re-ranking.
 # More candidates = better recall for the cross-encoder to work with.
 RERANK_CANDIDATES = TOP_K * 3
-
-# Maximum number of prior messages to include for conversational memory.
-# 10 messages = ~5 conversation turns. Keeps token usage predictable.
-MAX_HISTORY = 10
 
 # Groq settings (used when LLM_PROVIDER=groq, the default).
 LLM_MODEL = "qwen/qwen3.8-27b"
@@ -181,6 +178,33 @@ def _build_sources(docs: list) -> str:
     return format_sources(docs)
 
 
+def retrieve_documents(question: str, session_id: str = "default", method="reranked", history=None):
+    if method not in {"vector", "hybrid", "reranked"}:
+        raise ValueError("Unknown retrieval method.")
+    question = retrieval_query(question, history)
+    store = _load_vectorstore(session_id)
+    if store._collection.count() == 0:
+        raise RuntimeError("No documents indexed in this chat yet. Please upload a file first.")
+    if method == "vector":
+        candidates = store.similarity_search(question, k=TOP_K)
+    else:
+        candidates = _hybrid_retrieve(question, store)
+        candidates = (_rerank(question, candidates) if method == "reranked" and len(candidates) > TOP_K
+                      else candidates[:TOP_K])
+    return _resolve_parents(candidates, session_id)
+
+
+def _answer_messages(question, docs, history):
+    messages = [SystemMessage(content=SYSTEM_MESSAGE.format(context=_format_docs(docs)))]
+    for message in (history or [])[-MAX_HISTORY:]:
+        role = message.get("role")
+        if role in {"user", "assistant"}:
+            message_type = HumanMessage if role == "user" else AIMessage
+            messages.append(message_type(content=message.get("content", "")))
+    messages.append(HumanMessage(content=question))
+    return messages
+
+
 def get_answer(
     question: str,
     session_id: str = "default",
@@ -199,37 +223,9 @@ def get_answer(
     Returns a dict with "answer", "sources", and "source_documents".
     Raises RuntimeError if no documents have been indexed for this session.
     """
-    vectorstore = _load_vectorstore(session_id)
+    source_docs = retrieve_documents(question, session_id, history=history)
+    lc_messages = _answer_messages(question, source_docs, history)
 
-    if vectorstore._collection.count() == 0:
-        raise RuntimeError(
-            "No documents indexed in this chat yet. Please upload a file first."
-        )
-
-    # Step 1: hybrid retrieval (vector + BM25 via RRF), re-rank, then expand to parents.
-    candidates = _hybrid_retrieve(question, vectorstore)
-    reranked = _rerank(question, candidates) if len(candidates) > TOP_K else candidates
-    source_docs = _resolve_parents(reranked, session_id)
-    context = _format_docs(source_docs)
-
-    # Step 2: build message list.
-    # Using concrete message objects instead of a prompt template so that
-    # user-provided text (which may contain curly braces) never causes errors.
-    lc_messages: list = [SystemMessage(content=SYSTEM_MESSAGE.format(context=context))]
-
-    # Inject the tail of the conversation history for memory.
-    for msg in (history or [])[-MAX_HISTORY:]:
-        role = msg.get("role", "user")
-        content = msg.get("content", "")
-        if role == "user":
-            lc_messages.append(HumanMessage(content=content))
-        else:
-            lc_messages.append(AIMessage(content=content))
-
-    # Current turn
-    lc_messages.append(HumanMessage(content=question))
-
-    # Step 3: LCEL chain - messages | llm | parser
     llm = _build_llm()
     chain = llm | StrOutputParser()
 
@@ -257,31 +253,11 @@ async def stream_answer(
     Retrieval (ChromaDB + BM25 + cross-encoder) runs in a threadpool
     so it doesn't block the event loop while waiting for embeddings/reranker.
     """
-    def _retrieve():
-        vs = _load_vectorstore(session_id)
-        if vs._collection.count() == 0:
-            raise RuntimeError(
-                "No documents indexed in this chat yet. Please upload a file first."
-            )
-        candidates = _hybrid_retrieve(question, vs)
-        reranked = _rerank(question, candidates) if len(candidates) > TOP_K else candidates
-        return _resolve_parents(reranked, session_id)
-
-    source_docs = await run_work(_retrieve)
+    source_docs = await run_work(retrieve_documents, question, session_id, history=history)
     citations = build_citations(source_docs)
     sources = _build_sources(source_docs)
     yield {"type": "sources", "sources": sources, "citations": citations}
-    context = _format_docs(source_docs)
-
-    lc_messages: list = [SystemMessage(content=SYSTEM_MESSAGE.format(context=context))]
-    for msg in (history or [])[-MAX_HISTORY:]:
-        role = msg.get("role", "user")
-        content = msg.get("content", "")
-        if role == "user":
-            lc_messages.append(HumanMessage(content=content))
-        else:
-            lc_messages.append(AIMessage(content=content))
-    lc_messages.append(HumanMessage(content=question))
+    lc_messages = _answer_messages(question, source_docs, history)
 
     llm = _build_llm()
     chain = llm | StrOutputParser()
