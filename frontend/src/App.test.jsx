@@ -31,6 +31,8 @@ beforeEach(() => {
   aborted = false
   requests = []
   Element.prototype.scrollIntoView = vi.fn()
+  HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', '') }
+  HTMLDialogElement.prototype.close = function () { this.removeAttribute('open') }
   vi.stubGlobal('fetch', vi.fn(async (url, options = {}) => {
     requests.push({ url, ...options })
     if (url === '/api/sessions' && !options.method) return json({ sessions: structuredClone(sessions) })
@@ -129,6 +131,59 @@ describe('document chat workflow', () => {
     const view = mount()
     await screen.findByText('Saved question')
     expect(view.container.querySelector('.chat-title').textContent).toBe('Older chat')
+  })
+
+  it('asks before replacement and resends the original file only after confirmation', async () => {
+    const originalFetch = fetch
+    vi.stubGlobal('fetch', vi.fn((url, options) => {
+      if (url.startsWith('/api/upload') && !url.includes('replace=true')) {
+        return Promise.resolve({ status: 409, ok: false, json: async () => ({
+          detail: { code: 'document_exists', source: 'guide.pdf' },
+        }) })
+      }
+      return originalFetch(url, options)
+    }))
+    const user = userEvent.setup()
+    const view = mount()
+    await waitFor(() => expect(view.container.querySelector('.chat-title').textContent).toBe('New Chat'))
+    await user.upload(view.container.querySelector('input[type="file"]'), new File(['new'], 'guide.pdf', { type: 'application/pdf' }))
+    await screen.findByRole('dialog', { name: 'Replace document?' })
+    expect(requests.filter(request => request.url.includes('replace=true'))).toHaveLength(0)
+    await user.click(screen.getByRole('button', { name: 'Replace document' }))
+    await screen.findByText('✅ Indexed')
+    expect(requests.filter(request => request.url.includes('replace=true'))).toHaveLength(1)
+  })
+
+  it('keeps the indexed version when replacement is cancelled', async () => {
+    const originalFetch = fetch
+    vi.stubGlobal('fetch', vi.fn((url, options) => url.startsWith('/api/upload')
+      ? Promise.resolve({ status: 409, ok: false, json: async () => ({
+        detail: { code: 'document_exists', source: 'guide.pdf' },
+      }) }) : originalFetch(url, options)))
+    const user = userEvent.setup()
+    const view = mount()
+    await waitFor(() => expect(view.container.querySelector('.chat-title').textContent).toBe('New Chat'))
+    await user.upload(view.container.querySelector('input[type="file"]'), new File(['new'], 'guide.pdf', { type: 'application/pdf' }))
+    await screen.findByRole('dialog', { name: 'Replace document?' })
+    await user.click(screen.getByRole('button', { name: 'Keep existing' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(fetch.mock.calls.filter(([url]) => url.includes('replace=true'))).toHaveLength(0)
+    expect(view.container.querySelectorAll('.doc-item')).toHaveLength(0)
+  })
+
+  it('shows a skipped duplicate using its original indexed filename', async () => {
+    sessions[0].documents = ['guide.pdf']
+    const originalFetch = fetch
+    vi.stubGlobal('fetch', vi.fn((url, options) => url.startsWith('/api/upload')
+      ? Promise.resolve(json({ filename: 'guide.pdf', chunks: 3, status: 'skipped' }))
+      : originalFetch(url, options)))
+    const user = userEvent.setup()
+    const view = mount()
+    await waitFor(() => expect(view.container.querySelector('.chat-title').textContent).toBe('New Chat'))
+    await user.upload(view.container.querySelector('input[type="file"]'), new File(['same'], 'renamed.pdf', { type: 'application/pdf' }))
+    await screen.findByText('Already indexed')
+    expect(view.container.querySelectorAll('.doc-item')).toHaveLength(1)
+    expect(view.container.querySelector('.doc-name').textContent).toBe('guide.pdf')
   })
 
   it('creates only one default session under StrictMode', async () => {

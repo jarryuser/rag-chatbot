@@ -39,10 +39,10 @@ from dotenv import load_dotenv
 
 from rag import ingest, ingest_url, get_answer
 from rag.retriever import _get_embeddings, _get_reranker, stream_answer
-from rag.parents import drop_source_parents
+from rag.indexing import DocumentConflict, DocumentNotFound, document_names
 from rag.storage import session_directory, write_json
 from rag.http_limits import RequestSizeLimit
-from rag.limits import (MAX_UPLOAD_BYTES, MAX_DOCUMENTS_PER_SESSION, MAX_SESSIONS,
+from rag.limits import (MAX_UPLOAD_BYTES, MAX_SESSIONS,
                         ResourceLimitError, run_work)
 
 load_dotenv()
@@ -112,7 +112,12 @@ SESSIONS_FILE = CHROMA_BASE / "sessions.json"
 
 def _load_sessions() -> list[dict]:
     if SESSIONS_FILE.exists():
-        return json.loads(SESSIONS_FILE.read_text(encoding="utf-8"))
+        sessions = json.loads(SESSIONS_FILE.read_text(encoding="utf-8"))
+        for session in sessions:
+            names = document_names(_session_chroma_dir(session["id"]))
+            if names is not None:
+                session["documents"] = names
+        return sessions
     return []
 
 
@@ -273,6 +278,7 @@ async def delete_session(session_id: str):
 async def upload_document(
     file: UploadFile = File(...),
     session_id: str = Query(..., description="Target session ID"),
+    replace: bool = Query(False, description="Replace a changed document after confirmation"),
 ):
     """Upload and index a document into the specified session."""
     # Validate session exists
@@ -289,9 +295,6 @@ async def upload_document(
             detail=f"Unsupported file type '{ext}'. Allowed: {', '.join(sorted(allowed))}"
         )
 
-    if len(session["documents"]) >= MAX_DOCUMENTS_PER_SESSION:
-        raise HTTPException(status_code=429, detail="Maximum of 20 documents per session reached.")
-
     tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
@@ -302,7 +305,10 @@ async def upload_document(
                 if size > MAX_UPLOAD_BYTES:
                     raise HTTPException(status_code=413, detail="File too large. Maximum is 50 MB.")
                 tmp.write(content)
-        n_chunks = await run_work(ingest, tmp_path, display_name=file.filename, session_id=session_id)
+        result = await run_work(ingest, tmp_path, display_name=file.filename, session_id=session_id,
+                                replace=replace, return_result=True)
+    except DocumentConflict as exc:
+        raise HTTPException(status_code=409, detail={"code": "document_exists", "source": exc.source, "message": str(exc)}) from exc
     except ResourceLimitError as exc:
         raise HTTPException(status_code=429, detail=str(exc)) from exc
     except ValueError as exc:
@@ -318,11 +324,12 @@ async def upload_document(
             os.unlink(tmp_path)
 
     # Update document list in session
-    if file.filename not in session["documents"]:
-        session["documents"].append(file.filename)
+    if result.source not in session["documents"]:
+        session["documents"].append(result.source)
         _save_sessions(sessions)
 
-    return {"filename": file.filename, "chunks": n_chunks}
+    return {"filename": result.source, "chunks": result.chunks, "status": result.status,
+            "document_id": result.document_id}
 
 
 @app.post("/api/ingest-url")
@@ -330,6 +337,7 @@ async def upload_document(
 async def ingest_url_endpoint(
     req: IngestUrlRequest,
     session_id: str = Query(..., description="Target session ID"),
+    replace: bool = Query(False, description="Replace a changed document after confirmation"),
 ):
     """Fetch a web page by URL and index its content into the specified session."""
     sessions = _load_sessions()
@@ -341,10 +349,10 @@ async def ingest_url_endpoint(
     if not url.startswith(("http://", "https://")):
         raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
 
-    if len(session["documents"]) >= MAX_DOCUMENTS_PER_SESSION:
-        raise HTTPException(status_code=429, detail="Maximum of 20 documents per session reached.")
     try:
-        n_chunks, display_name = await run_work(ingest_url, url, session_id=session_id)
+        result = await run_work(ingest_url, url, session_id=session_id, replace=replace, return_result=True)
+    except DocumentConflict as exc:
+        raise HTTPException(status_code=409, detail={"code": "document_exists", "source": exc.source, "message": str(exc)}) from exc
     except ResourceLimitError as exc:
         raise HTTPException(status_code=429, detail=str(exc)) from exc
     except ValueError as exc:
@@ -353,40 +361,36 @@ async def ingest_url_endpoint(
         logger.exception("URL indexing failed")
         raise HTTPException(status_code=500, detail="Could not index the web page.") from exc
 
-    if display_name not in session["documents"]:
-        session["documents"].append(display_name)
+    if result.source not in session["documents"]:
+        session["documents"].append(result.source)
         _save_sessions(sessions)
 
-    return {"display_name": display_name, "chunks": n_chunks}
+    return {"display_name": result.source, "chunks": result.chunks, "status": result.status,
+            "document_id": result.document_id}
 
 
-@app.delete("/api/documents/{filename}")
+@app.delete("/api/documents/{filename:path}")
 @serialized_mutation
 async def delete_document(
     filename: str,
     session_id: str = Query(..., description="Session the document belongs to"),
 ):
     """Remove a document and all its chunks from the specified session."""
-    from langchain_community.vectorstores import Chroma
+    from rag.ingestor import remove_document
 
     sessions = _load_sessions()
     session = next((s for s in sessions if s["id"] == session_id), None)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found.")
 
-    chroma_dir = str(_session_chroma_dir(session_id))
-    def remove_document():
-        vectorstore = Chroma(
-            persist_directory=chroma_dir,
-            embedding_function=_get_embeddings(),
-        )
-        vectorstore.delete(where={"source": filename})
-        drop_source_parents(session_id, filename)
-
     try:
-        await run_work(remove_document)
+        await run_work(remove_document, session_id, filename)
     except ResourceLimitError:
         raise
+    except DocumentNotFound as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         logger.exception("Document deletion failed")
         raise HTTPException(status_code=500, detail="Could not delete the document.") from exc

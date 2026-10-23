@@ -18,6 +18,8 @@ gets more context than the narrow search window provides.
 """
 
 import uuid
+import hashlib
+from urllib.parse import urldefrag
 from pathlib import Path
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
@@ -25,9 +27,10 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 
-from .parents import load_parents, save_parents
+from .indexing import (DocumentConflict, IngestionResult, recover_index, load_manifest,
+                       find_existing, replace_document, delete_document)
 from .embeddings import _get_embeddings
-from .limits import MAX_DOCUMENT_CHARS, MAX_CHUNKS_PER_SESSION, ResourceLimitError
+from .limits import MAX_DOCUMENT_CHARS, ResourceLimitError
 from .storage import session_directory
 from .web import fetch_page
 
@@ -50,10 +53,25 @@ def _check_document(docs):
         raise ResourceLimitError("Document exceeds the 2 million character limit.")
 
 
-def _check_capacity(session_id, chunks):
-    store = Chroma(persist_directory=_chroma_dir(session_id), embedding_function=_get_embeddings())
-    if store._collection.count() + len(chunks) > MAX_CHUNKS_PER_SESSION:
-        raise ResourceLimitError("Session exceeds the 10,000 chunk limit.")
+def _store(session_id):
+    directory = Path(_chroma_dir(session_id))
+    store = Chroma(persist_directory=str(directory), embedding_function=_get_embeddings())
+    recover_index(store, directory)
+    return store, directory
+
+
+def remove_document(session_id, source):
+    store, directory = _store(session_id)
+    delete_document(store, directory, source)
+
+
+def _existing(store, directory, key, fingerprint, replace):
+    previous, unchanged = find_existing(load_manifest(store, directory), key, fingerprint)
+    if unchanged:
+        return IngestionResult(previous["chunks"], previous["source"], "skipped", previous["id"])
+    if previous and not replace:
+        raise DocumentConflict(previous["source"])
+    return None
 
 
 def _load_document(file_path: str) -> list[Document]:
@@ -125,73 +143,49 @@ def _split_with_parents(docs: list[Document]) -> tuple[list[Document], dict[str,
     return child_chunks, parents_dict
 
 
-def ingest(file_path: str, display_name: str | None = None, session_id: str = "default") -> int:
-    """
-    Index a document into the ChromaDB collection for the given session.
-
-    Args:
-        file_path:    Path to the file on disk (may be a temp path).
-        display_name: Human-readable filename shown in source citations.
-        session_id:   ID of the chat session.
-
-    Returns the number of child chunks stored.
-    """
+def ingest(file_path: str, display_name: str | None = None, session_id: str = "default",
+           *, replace=False, return_result=False):
     label = display_name or Path(file_path).name
-
-    docs = _load_document(file_path)
-    for doc in docs:
-        doc.metadata["source"] = label
-
-    _check_document(docs)
-    child_chunks, parents_dict = _split_with_parents(docs)
-
-    if not child_chunks:
-        raise ValueError("No text could be extracted from the document.")
-
-    _check_capacity(session_id, child_chunks)
-
-    # Merge new parents into the session store
-    existing = load_parents(session_id)
-    existing.update(parents_dict)
-    save_parents(session_id, existing)
-
-    Chroma.from_documents(
-        documents=child_chunks,
-        embedding=_get_embeddings(),
-        persist_directory=_chroma_dir(session_id),
-    )
-
-    return len(child_chunks)
+    fingerprint = hashlib.sha256()
+    fingerprint.update(Path(file_path).suffix.lower().encode())
+    with open(file_path, "rb") as handle:
+        for block in iter(lambda: handle.read(64 * 1024), b""):
+            fingerprint.update(block)
+    fingerprint = fingerprint.hexdigest()
+    key = "file:" + label
+    store, directory = _store(session_id)
+    result = _existing(store, directory, key, fingerprint, replace)
+    if result is None:
+        docs = _load_document(file_path)
+        for doc in docs:
+            doc.metadata["source"] = label
+        _check_document(docs)
+        children, parents = _split_with_parents(docs)
+        if not children:
+            raise ValueError("No text could be extracted from the document.")
+        result = replace_document(store, directory, key, label, fingerprint, children, parents, replace=replace)
+    return result if return_result else result.chunks
 
 
-def ingest_url(url: str, session_id: str = "default") -> tuple[int, str]:
-    """Fetch a web page and index it. Returns (n_chunks, display_name)."""
+def ingest_url(url: str, session_id: str = "default", *, replace=False, return_result=False):
     from bs4 import BeautifulSoup
 
     content, final_url = fetch_page(url)
-    soup = BeautifulSoup(content, "html.parser")
-    display_name = soup.title.get_text(strip=True) if soup.title else final_url
-    display_name = display_name[:255] or final_url
-    for element in soup(["script", "style", "nav", "footer"]):
-        element.decompose()
-    text = soup.get_text(separator="\n", strip=True)
-    docs = [Document(page_content=text, metadata={"source": display_name, "url": final_url})]
-    _check_document(docs)
-    child_chunks, parents_dict = _split_with_parents(docs)
-
-    if not child_chunks:
-        raise ValueError("No text content found at the given URL.")
-
-    _check_capacity(session_id, child_chunks)
-
-    existing = load_parents(session_id)
-    existing.update(parents_dict)
-    save_parents(session_id, existing)
-
-    Chroma.from_documents(
-        documents=child_chunks,
-        embedding=_get_embeddings(),
-        persist_directory=_chroma_dir(session_id),
-    )
-
-    return len(child_chunks), display_name
+    final_url = urldefrag(final_url)[0]
+    key = "url:" + final_url
+    fingerprint = hashlib.sha256(content).hexdigest()
+    store, directory = _store(session_id)
+    result = _existing(store, directory, key, fingerprint, replace)
+    if result is None:
+        soup = BeautifulSoup(content, "html.parser")
+        label = (soup.title.get_text(strip=True) if soup.title else final_url)[:255] or final_url
+        for element in soup(["script", "style", "nav", "footer"]):
+            element.decompose()
+        docs = [Document(page_content=soup.get_text(separator="\n", strip=True),
+                         metadata={"source": label, "url": final_url})]
+        _check_document(docs)
+        children, parents = _split_with_parents(docs)
+        if not children:
+            raise ValueError("No text content found at the given URL.")
+        result = replace_document(store, directory, key, label, fingerprint, children, parents, replace=replace)
+    return result if return_result else (result.chunks, result.source)

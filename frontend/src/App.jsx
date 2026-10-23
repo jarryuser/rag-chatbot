@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import Sidebar from './components/Sidebar.jsx'
+import ReplacementDialog from './components/ReplacementDialog.jsx'
 import ChatWindow from './components/ChatWindow.jsx'
 
 import { loadHistory, saveHistory, updateMessage, readEvents, normalizeCitations, restoreSession, ACTIVE_SESSION_KEY } from './chat.js'
@@ -50,6 +51,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState(null)
   const [urlIngestStatus, setUrlIngestStatus] = useState(null)
+  const [replacement, setReplacement] = useState(null)
 
   // Current session object derived from state
   const currentSession = sessions.find(s => s.id === currentSessionId) ?? null
@@ -140,8 +142,8 @@ export default function App() {
   }, [])
 
   // ── Upload handler ────────────────────────────────────────────────────────
-  const handleUpload = useCallback(async (file) => {
-    if (!currentSessionId || !file) return
+  const handleUpload = useCallback(async (file, replace = false, sessionId = currentSessionId) => {
+    if (!sessionId || !file) return
     setApiError('')
     setUploadStatus('uploading')
     const form = new FormData()
@@ -149,19 +151,24 @@ export default function App() {
 
     try {
       const res = await fetch(
-        `${API}/api/upload?session_id=${currentSessionId}`,
+        `${API}/api/upload?session_id=${sessionId}${replace ? '&replace=true' : ''}`,
         { method: 'POST', body: form }
       )
       const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || 'Upload failed')
+      if (res.status === 409 && data.detail?.code === 'document_exists') {
+        setReplacement({ type: 'file', file, sessionId, source: data.detail.source })
+        setUploadStatus(null)
+        return
+      }
+      if (!res.ok) throw new Error(data.detail?.message || data.detail || 'Upload failed')
 
       // Update the document list inside the current session
       setSessions(prev => prev.map(s =>
-        s.id === currentSessionId
+        s.id === sessionId
           ? { ...s, documents: s.documents.includes(data.filename) ? s.documents : [...s.documents, data.filename] }
           : s
       ))
-      setUploadStatus('success')
+      setUploadStatus(data.status === 'skipped' ? 'skipped' : data.status === 'replaced' ? 'replaced' : 'success')
       setTimeout(() => setUploadStatus(null), 3000)
     } catch (err) {
       setApiError(err.message || 'Upload failed')
@@ -172,13 +179,13 @@ export default function App() {
   }, [currentSessionId])
 
   // ── Ingest URL handler ────────────────────────────────────────────────────
-  const handleIngestUrl = useCallback(async (url) => {
-    if (!currentSessionId || !url.trim()) return
+  const handleIngestUrl = useCallback(async (url, replace = false, sessionId = currentSessionId) => {
+    if (!sessionId || !url.trim()) return
     setApiError('')
     setUrlIngestStatus('loading')
     try {
       const res = await fetch(
-        `${API}/api/ingest-url?session_id=${currentSessionId}`,
+        `${API}/api/ingest-url?session_id=${sessionId}${replace ? '&replace=true' : ''}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -186,10 +193,15 @@ export default function App() {
         }
       )
       const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || 'Ingest failed')
+      if (res.status === 409 && data.detail?.code === 'document_exists') {
+        setReplacement({ type: 'url', url, sessionId, source: data.detail.source })
+        setUrlIngestStatus(null)
+        return
+      }
+      if (!res.ok) throw new Error(data.detail?.message || data.detail || 'Ingest failed')
 
       setSessions(prev => prev.map(s =>
-        s.id === currentSessionId
+        s.id === sessionId
           ? {
               ...s,
               documents: s.documents.includes(data.display_name)
@@ -198,7 +210,7 @@ export default function App() {
             }
           : s
       ))
-      setUrlIngestStatus('success')
+      setUrlIngestStatus(data.status === 'skipped' ? 'skipped' : data.status === 'replaced' ? 'replaced' : 'success')
       setTimeout(() => setUrlIngestStatus(null), 3000)
     } catch (err) {
       setApiError(err.message || 'URL import failed')
@@ -308,6 +320,13 @@ export default function App() {
 
   return (
     <div className="app-layout">
+      <ReplacementDialog replacement={replacement} onCancel={() => setReplacement(null)}
+        onConfirm={() => {
+          const pending = replacement
+          setReplacement(null)
+          if (pending?.type === 'file') handleUpload(pending.file, true, pending.sessionId)
+          else if (pending?.type === 'url') handleIngestUrl(pending.url, true, pending.sessionId)
+        }} />
       <Sidebar
         sessions={sessions}
         currentSessionId={currentSessionId}

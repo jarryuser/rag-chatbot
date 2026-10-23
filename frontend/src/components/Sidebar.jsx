@@ -225,6 +225,8 @@ export default function Sidebar({
           className="hidden-input" onChange={handleFileChange} />
       </div>
 
+      {uploadStatus === 'skipped' && <p className="status-badge success">Already indexed</p>}
+      {uploadStatus === 'replaced' && <p className="status-badge success">Document replaced</p>}
       {uploadStatus === 'success' && <p className="status-badge success">✅ Indexed</p>}
       {uploadStatus === 'error'   && <p className="status-badge error">❌ Upload failed</p>}
 
@@ -251,6 +253,8 @@ export default function Sidebar({
         </div>
       </form>
       {urlIngestStatus === 'loading' && <p className="status-badge">⏳ Fetching…</p>}
+      {urlIngestStatus === 'skipped' && <p className="status-badge success">Already indexed</p>}
+      {urlIngestStatus === 'replaced' && <p className="status-badge success">Document replaced</p>}
       {urlIngestStatus === 'success' && <p className="status-badge success">✅ Indexed</p>}
       {urlIngestStatus === 'error'   && <p className="status-badge error">❌ Failed</p>}
 

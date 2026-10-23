@@ -16,6 +16,7 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 
 from rag import embeddings, limits, storage, web
+from rag.indexing import IngestionResult, DocumentConflict, DocumentNotFound
 
 
 class StorageTests(unittest.TestCase):
@@ -237,7 +238,7 @@ class ApiTests(unittest.TestCase):
         def fake_ingest(path, **kwargs):
             self.assertEqual(Path(path).read_bytes(), b'hello')
             self.upload_path = Path(path)
-            return 2
+            return IngestionResult(2, "a.txt", "created", "test-document")
 
         with patch.object(self.server, 'MAX_UPLOAD_BYTES', 10), \
                 patch.object(self.server, 'ingest', side_effect=fake_ingest) as ingest:
@@ -251,10 +252,29 @@ class ApiTests(unittest.TestCase):
     def test_session_and_document_quotas(self):
         with patch.object(self.server, 'MAX_SESSIONS', 1):
             self.assertEqual(self.client.post('/api/sessions', json={}).status_code, 429)
-        with patch.object(self.server, 'MAX_DOCUMENTS_PER_SESSION', 0):
+        with patch.object(self.server, 'ingest', side_effect=limits.ResourceLimitError('Session is full')):
             response = self.client.post(f'/api/upload?session_id={self.session["id"]}',
                                         files={'file': ('a.txt', b'hello')})
             self.assertEqual(response.status_code, 429)
+
+    def test_changed_upload_returns_conflict_and_explicit_replace_is_forwarded(self):
+        url = f'/api/upload?session_id={self.session["id"]}'
+        with patch.object(self.server, 'ingest', side_effect=DocumentConflict('a.txt')):
+            response = self.client.post(url, files={'file': ('a.txt', b'changed')})
+            self.assertEqual(response.status_code, 409)
+            self.assertEqual(response.json()['detail']['code'], 'document_exists')
+        with patch.object(self.server, 'ingest', return_value=IngestionResult(1, 'a.txt', 'replaced', 'id')) as ingest:
+            response = self.client.post(url + '&replace=true', files={'file': ('a.txt', b'changed')})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()['status'], 'replaced')
+            self.assertTrue(ingest.call_args.kwargs['replace'])
+
+    def test_missing_document_returns_not_found(self):
+        ingestor = types.ModuleType('rag.ingestor')
+        ingestor.remove_document = Mock(side_effect=DocumentNotFound('Document not found.'))
+        with patch.dict(sys.modules, {'rag.ingestor': ingestor}):
+            response = self.client.delete(f'/api/documents/missing.txt?session_id={self.session["id"]}')
+        self.assertEqual(response.status_code, 404)
 
     def test_chat_validation_rejects_oversized_history_and_question(self):
         base = {'session_id': self.session['id'], 'question': 'Hello'}

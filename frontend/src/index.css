@@ -499,3 +499,11 @@ html, body, #root {
 .source-number { color: var(--accent); font-weight: 600; }
 .source-excerpt blockquote { margin: 0; padding: 12px; border-top: 1px solid var(--border); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.7; max-height: 320px; overflow-y: auto; }
 .source-excerpt > a { display: inline-block; padding: 0 12px 12px; color: var(--accent); font-size: 12px; }
+
+.replacement-dialog { margin: auto; padding: 24px; max-width: 460px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.replacement-dialog::backdrop { background: rgba(0,0,0,0.65); }
+.replacement-dialog h2 { margin-bottom: 12px; font-size: 18px; }
+.replacement-dialog p { margin: 10px 0; overflow-wrap: anywhere; }
+.replacement-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+.replacement-actions button { padding: 8px 12px; cursor: pointer; border-radius: 6px; background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+.replacement-actions button:last-child { background: var(--accent); color: #fff; }

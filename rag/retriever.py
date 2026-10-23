@@ -30,6 +30,7 @@ from langchain_core.output_parsers import StrOutputParser
 from .prompts import SYSTEM_MESSAGE
 from .citations import build_citations, format_context, format_sources
 from .parents import load_parents
+from .indexing import recover_index
 from .embeddings import _get_embeddings
 from .limits import MAX_ANSWER_TOKENS, run_work
 from .storage import session_directory
@@ -70,10 +71,9 @@ def _chroma_dir(session_id: str) -> str:
 
 def _load_vectorstore(session_id: str) -> Chroma:
     """Load the ChromaDB collection for a specific session."""
-    return Chroma(
-        persist_directory=_chroma_dir(session_id),
-        embedding_function=_get_embeddings(),
-    )
+    store = Chroma(persist_directory=_chroma_dir(session_id), embedding_function=_get_embeddings())
+    recover_index(store, Path(_chroma_dir(session_id)))
+    return store
 
 
 def _tokenize(text: str) -> list[str]:
