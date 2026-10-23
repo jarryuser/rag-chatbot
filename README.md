@@ -311,3 +311,62 @@ python scripts/check_live.py
 This check requires full project dependencies, model downloads on the first run, and a working configured provider; it sends only synthetic test content and uses the provider's existing quota
 
 `npm test` also checks the React workflow in a simulated DOM: upload, answer, source inspection, Stop, clearing, and restoring the selected conversation and its passages after remount
+
+
+## Document updates
+
+- Uploading the same bytes with the same file extension again returns `status: skipped` without new vectors, even under a different filename
+- Different content under an existing filename returns HTTP 409; the interface asks before resending with `replace=true`
+- Replacement preserves the document ID and replaces its child chunks and parent passages
+- Reimporting an unchanged web page is skipped; changed content requires the same replacement confirmation
+- Pages are identified by their final URL, so matching page titles do not merge unrelated documents
+- A journal stores the previous vectors and metadata before an update; failed writes roll back, and interrupted updates recover before the next index operation or retrieval
+- A failed recovery keeps the journal and blocks that operation instead of serving a partially updated index
+- The document manifest provides the current document list; older indexes are registered when first modified
+- Legacy entries without a fingerprint need one confirmed replacement before byte-level duplicate detection is available
+
+Recovery targets a single-process deployment and needs temporary disk space for the previous version; existing chat answers keep their saved source passages after replacement or deletion
+
+To check duplicate handling, replacement, rollback, and interrupted-update recovery against real ChromaDB using temporary data:
+
+```bash
+python scripts/check_documents.py
+```
+
+## Quality benchmark
+
+The synthetic benchmark contains 36 questions over 12 short documents in English, Russian, and Slovak: 24 direct facts or identifiers, 8 questions without an answer, and 4 conversational follow-ups
+
+```bash
+# Local retrieval only, without provider calls
+python scripts/evaluate.py --output /tmp/rag-retrieval.json
+
+# Also evaluate generated answers using the existing provider quota
+python scripts/evaluate.py --answers --delay 10 --output /tmp/rag-answers.json
+```
+
+The report compares vector search, hybrid search, and reranking using evidence hit rate in the first four passages and mean reciprocal rank; a hit requires both the expected source and the supporting text
+
+Questions without an answer are excluded from retrieval hit rates; follow-up cases check whether the search includes the relevant conversation topic
+
+Generated answers are retained for review alongside answer-alias checks, reference checks, and abstention markers. These are diagnostics, not a semantic correctness judge or a claim of production accuracy
+
+The corpus is deliberately small and does not represent long PDFs, OCR, or real user documents; extend it with held-out examples before using the results to choose retrieval settings
+
+
+The initial measured results and manual review are recorded in [evaluation/RESULTS.md](evaluation/RESULTS.md), with individual answers in [evaluation/baseline.json](evaluation/baseline.json)
+
+
+Retrieval now adds recent user questions to referential follow-ups in English, Russian, and Slovak, with at most 1,600 characters of historical context and no extra provider call; assistant assertions are excluded from search hints
+
+The same contextual query is used by vector search, BM25, and reranking. This is a bounded heuristic, not a semantic rewrite: ambiguous references and topic changes can still require clarification
+
+The answer instructions require explicit acknowledgement of missing information and distinguish facts absent from the excerpts from events that never happened; these instructions reduce risk but cannot guarantee factual correctness
+
+The additional checks use three new synthetic documents and 12 questions, including chained follow-ups, topic changes, and unsupported claims in conversation history:
+
+```bash
+python scripts/evaluate.py --dataset evaluation/followup-check.json --answers --delay 10 --output /tmp/rag-followups.json
+```
+
+The repeated benchmark and additional scenario results are recorded in [evaluation/IMPROVEMENTS.md](evaluation/IMPROVEMENTS.md), with case-level answers in `evaluation/after.json` and `evaluation/followup-results.json`

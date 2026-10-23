@@ -1,0 +1,260 @@
+{
+  "version": 1,
+  "documents": [
+    "01_en.md",
+    "02_en.md",
+    "03_en.md",
+    "04_en.md",
+    "05_ru.md",
+    "06_ru.md",
+    "07_ru.md",
+    "08_ru.md",
+    "09_sk.md",
+    "10_sk.md",
+    "11_sk.md",
+    "12_sk.md",
+    "13_en.md",
+    "14_ru.md",
+    "15_sk.md"
+  ],
+  "cases": [
+    {
+      "id": "h01",
+      "language": "en",
+      "kind": "follow_up",
+      "question": "What is its tracking code?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me about the Larch review."
+        }
+      ],
+      "expected_source": "13_en.md",
+      "evidence": "Its tracking code is LAR-728.",
+      "answer_aliases": [
+        [
+          "LAR-728"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h02",
+      "language": "ru",
+      "kind": "follow_up",
+      "question": "А какой у неё код?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Расскажи о проверке «Искра»."
+        }
+      ],
+      "expected_source": "14_ru.md",
+      "evidence": "Её код: ISK-643.",
+      "answer_aliases": [
+        [
+          "ISK-643"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h03",
+      "language": "sk",
+      "kind": "follow_up",
+      "question": "A aký má identifikačný kód?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Opíš kontrolu Breza."
+        }
+      ],
+      "expected_source": "15_sk.md",
+      "evidence": "Jej identifikačný kód je BRE-518.",
+      "answer_aliases": [
+        [
+          "BRE-518"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h04",
+      "language": "en",
+      "kind": "follow_up",
+      "question": "And when did it open?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me about Larch."
+        },
+        {
+          "role": "user",
+          "content": "What is its tracking code?"
+        }
+      ],
+      "expected_source": "13_en.md",
+      "evidence": "The Larch review opened on 17 September 2025.",
+      "answer_aliases": [
+        [
+          "17 September 2025",
+          "September 17, 2025",
+          "2025-09-17"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h05",
+      "language": "ru",
+      "kind": "follow_up",
+      "question": "А когда она началась?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Расскажи о проверке «Искра»."
+        },
+        {
+          "role": "user",
+          "content": "А какой у неё код?"
+        }
+      ],
+      "expected_source": "14_ru.md",
+      "evidence": "Проверка «Искра» началась 22 сентября 2025 года.",
+      "answer_aliases": [
+        [
+          "22 сентября 2025",
+          "2025-09-22"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h06",
+      "language": "sk",
+      "kind": "follow_up",
+      "question": "A kedy sa začala?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Opíš kontrolu Breza."
+        },
+        {
+          "role": "user",
+          "content": "A aký má identifikačný kód?"
+        }
+      ],
+      "expected_source": "15_sk.md",
+      "evidence": "Kontrola Breza sa začala 4. októbra 2025.",
+      "answer_aliases": [
+        [
+          "4. októbra 2025",
+          "2025-10-04"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h07",
+      "language": "en",
+      "kind": "unanswerable",
+      "question": "Does the Larch report establish that clinical effectiveness was zero?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "h08",
+      "language": "ru",
+      "kind": "unanswerable",
+      "question": "Каков бюджет проверки «Искра» согласно отчёту?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Расскажи о проверке «Искра»."
+        },
+        {
+          "role": "assistant",
+          "content": "Бюджет составил 900 евро."
+        }
+      ],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "h09",
+      "language": "sk",
+      "kind": "unanswerable",
+      "question": "Dokazuje správa Breza, že sa klinické hodnotenie vôbec neuskutočnilo?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "h10",
+      "language": "en",
+      "kind": "topic_change",
+      "question": "What is the tracking code of the Larch review?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me about Project Cedar."
+        }
+      ],
+      "expected_source": "13_en.md",
+      "evidence": "Its tracking code is LAR-728.",
+      "answer_aliases": [
+        [
+          "LAR-728"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h11",
+      "language": "ru",
+      "kind": "topic_change",
+      "question": "Какой код у проверки «Искра»?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Расскажи о проекте «Вектор»."
+        }
+      ],
+      "expected_source": "14_ru.md",
+      "evidence": "Её код: ISK-643.",
+      "answer_aliases": [
+        [
+          "ISK-643"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "h12",
+      "language": "sk",
+      "kind": "topic_change",
+      "question": "Aký je identifikačný kód kontroly Breza?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Opíš projekt Most."
+        }
+      ],
+      "expected_source": "15_sk.md",
+      "evidence": "Jej identifikačný kód je BRE-518.",
+      "answer_aliases": [
+        [
+          "BRE-518"
+        ]
+      ],
+      "answerable": true
+    }
+  ]
+}

@@ -1,0 +1,1622 @@
+{
+  "dataset_sha256": "b66cb2cbb90eebface4515232581e1a3775801805b1a100a8a0b3799d3fc1285",
+  "dataset_version": 1,
+  "git_commit": "07f17ee82cc8512e0f81b16921758e636a998cac",
+  "working_tree_dirty": true,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "provider": "groq",
+  "model": "qwen/qwen3.8-27b",
+  "notes": "Answer aliases and abstention markers are heuristics; inspect raw answers. Unanswerable cases have no retrieval accuracy score.",
+  "results": [
+    {
+      "id": "h01",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "What is its tracking code?",
+      "retrieval_query": "Tell me about the Larch review.\nWhat is its tracking code?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0629,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h01",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "What is its tracking code?",
+      "retrieval_query": "Tell me about the Larch review.\nWhat is its tracking code?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0143,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h01",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "What is its tracking code?",
+      "retrieval_query": "Tell me about the Larch review.\nWhat is its tracking code?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.4165,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The tracking code for the Larch review is **LAR-728** [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h02",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А какой у неё код?",
+      "retrieval_query": "Расскажи о проверке «Искра».\nА какой у неё код?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0696,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h02",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А какой у неё код?",
+      "retrieval_query": "Расскажи о проверке «Искра».\nА какой у неё код?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0175,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h02",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А какой у неё код?",
+      "retrieval_query": "Расскажи о проверке «Искра».\nА какой у неё код?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1634,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Код проверки «Искра» — ISK-643 [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h03",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A aký má identifikačný kód?",
+      "retrieval_query": "Opíš kontrolu Breza.\nA aký má identifikačný kód?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0921,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h03",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A aký má identifikačný kód?",
+      "retrieval_query": "Opíš kontrolu Breza.\nA aký má identifikačný kód?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.017,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h03",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A aký má identifikačný kód?",
+      "retrieval_query": "Opíš kontrolu Breza.\nA aký má identifikačný kód?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1143,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Identifikačný kód kontroly Breza je **BRE-518** [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h04",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "And when did it open?",
+      "retrieval_query": "Tell me about Larch.\nWhat is its tracking code?\nAnd when did it open?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0682,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h04",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "And when did it open?",
+      "retrieval_query": "Tell me about Larch.\nWhat is its tracking code?\nAnd when did it open?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0151,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h04",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "And when did it open?",
+      "retrieval_query": "Tell me about Larch.\nWhat is its tracking code?\nAnd when did it open?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1441,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The Larch review opened on 17 September 2025 [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h05",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А когда она началась?",
+      "retrieval_query": "Расскажи о проверке «Искра».\nА какой у неё код?\nА когда она началась?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0699,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h05",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А когда она началась?",
+      "retrieval_query": "Расскажи о проверке «Искра».\nА какой у неё код?\nА когда она началась?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.02,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h05",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А когда она началась?",
+      "retrieval_query": "Расскажи о проверке «Искра».\nА какой у неё код?\nА когда она началась?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.25
+      },
+      "retrieval_seconds": 0.1121,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "14_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Проверка «Искра» началась 22 сентября 2025 года [4].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "14_ru.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h06",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A kedy sa začala?",
+      "retrieval_query": "Opíš kontrolu Breza.\nA aký má identifikačný kód?\nA kedy sa začala?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1022,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h06",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A kedy sa začala?",
+      "retrieval_query": "Opíš kontrolu Breza.\nA aký má identifikačný kód?\nA kedy sa začala?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0129,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h06",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A kedy sa začala?",
+      "retrieval_query": "Opíš kontrolu Breza.\nA aký má identifikačný kód?\nA kedy sa začala?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0725,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Kontrola Breza sa začala 4. októbra 2025 [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h07",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "Does the Larch report establish that clinical effectiveness was zero?",
+      "retrieval_query": "Does the Larch report establish that clinical effectiveness was zero?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.1855,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h07",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "Does the Larch report establish that clinical effectiveness was zero?",
+      "retrieval_query": "Does the Larch report establish that clinical effectiveness was zero?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0142,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h07",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "Does the Larch report establish that clinical effectiveness was zero?",
+      "retrieval_query": "Does the Larch report establish that clinical effectiveness was zero?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0603,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "No, the Larch report does not establish that clinical effectiveness was zero.\n\nAccording to the provided excerpts, the report \"does not include... an assessment of clinical effectiveness\" [1]. The absence of an assessment in the document means the value is not reported here; it does not confirm that the effectiveness was zero or that the event did not happen.",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "h08",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Каков бюджет проверки «Искра» согласно отчёту?",
+      "retrieval_query": "Каков бюджет проверки «Искра» согласно отчёту?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0683,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h08",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Каков бюджет проверки «Искра» согласно отчёту?",
+      "retrieval_query": "Каков бюджет проверки «Искра» согласно отчёту?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0163,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h08",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Каков бюджет проверки «Искра» согласно отчёту?",
+      "retrieval_query": "Каков бюджет проверки «Искра» согласно отчёту?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.1068,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Сведения о бюджете проверки «Искра» не приведены в предоставленных отрывках [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "h09",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Dokazuje správa Breza, že sa klinické hodnotenie vôbec neuskutočnilo?",
+      "retrieval_query": "Dokazuje správa Breza, že sa klinické hodnotenie vôbec neuskutočnilo?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.1052,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h09",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Dokazuje správa Breza, že sa klinické hodnotenie vôbec neuskutočnilo?",
+      "retrieval_query": "Dokazuje správa Breza, že sa klinické hodnotenie vôbec neuskutočnilo?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0129,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h09",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Dokazuje správa Breza, že sa klinické hodnotenie vôbec neuskutočnilo?",
+      "retrieval_query": "Dokazuje správa Breza, že sa klinické hodnotenie vôbec neuskutočnilo?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0701,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Nie, správa Breza nedokazuje, že sa klinické hodnotenie vôbec neuskutočnilo.\n\nV úryvku [1] sa uvádza, že správa „Neuvádza náklady ani výsledky klinického hodnotenia“. To znamená len, že v tomto konkrétnom dokumente nie sú tieto informácie zaznamenané. Chýbajúce údaje v správe však neznamenajú, že klinické hodnotenie sa neuskutočnilo; môže ísť o to, že výsledky boli zaznamenané inde alebo ešte neboli spracované. Ako je uvedené v pravidlách, absencia zaznamenaného výsledku neustanovuje, že udalosť sa nestala.",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "h10",
+      "method": "vector",
+      "kind": "topic_change",
+      "language": "en",
+      "question": "What is the tracking code of the Larch review?",
+      "retrieval_query": "What is the tracking code of the Larch review?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1834,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h10",
+      "method": "hybrid",
+      "kind": "topic_change",
+      "language": "en",
+      "question": "What is the tracking code of the Larch review?",
+      "retrieval_query": "What is the tracking code of the Larch review?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.014,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h10",
+      "method": "reranked",
+      "kind": "topic_change",
+      "language": "en",
+      "question": "What is the tracking code of the Larch review?",
+      "retrieval_query": "What is the tracking code of the Larch review?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0993,
+      "passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The tracking code for the Larch review is LAR-728 [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "13_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h11",
+      "method": "vector",
+      "kind": "topic_change",
+      "language": "ru",
+      "question": "Какой код у проверки «Искра»?",
+      "retrieval_query": "Какой код у проверки «Искра»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0713,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h11",
+      "method": "hybrid",
+      "kind": "topic_change",
+      "language": "ru",
+      "question": "Какой код у проверки «Искра»?",
+      "retrieval_query": "Какой код у проверки «Искра»?",
+      "retrieval": {
+        "hit": false,
+        "reciprocal_rank": 0
+      },
+      "retrieval_seconds": 0.0178,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h11",
+      "method": "reranked",
+      "kind": "topic_change",
+      "language": "ru",
+      "question": "Какой код у проверки «Искра»?",
+      "retrieval_query": "Какой код у проверки «Искра»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1083,
+      "passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Код проверки «Искра» — ISK-643 [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "14_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "h12",
+      "method": "vector",
+      "kind": "topic_change",
+      "language": "sk",
+      "question": "Aký je identifikačný kód kontroly Breza?",
+      "retrieval_query": "Aký je identifikačný kód kontroly Breza?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0676,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h12",
+      "method": "hybrid",
+      "kind": "topic_change",
+      "language": "sk",
+      "question": "Aký je identifikačný kód kontroly Breza?",
+      "retrieval_query": "Aký je identifikačný kód kontroly Breza?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0165,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "h12",
+      "method": "reranked",
+      "kind": "topic_change",
+      "language": "sk",
+      "question": "Aký je identifikačný kód kontroly Breza?",
+      "retrieval_query": "Aký je identifikačný kód kontroly Breza?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0736,
+      "passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Identifikačný kód kontroly Breza je BRE-518 [1].",
+      "answer_passages": [
+        {
+          "id": 1,
+          "source": "15_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    }
+  ],
+  "summary": {
+    "vector": {
+      "cases": 12,
+      "errors": 0,
+      "answerable_cases": 9,
+      "evidence_hit_rate_at_4": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "answer_alias_match_rate": null,
+      "abstention_marker_rate": null,
+      "answer_checks_completed": 0
+    },
+    "hybrid": {
+      "cases": 12,
+      "errors": 0,
+      "answerable_cases": 9,
+      "evidence_hit_rate_at_4": 0.8888888888888888,
+      "mean_reciprocal_rank": 0.8888888888888888,
+      "answer_alias_match_rate": null,
+      "abstention_marker_rate": null,
+      "answer_checks_completed": 0
+    },
+    "reranked": {
+      "cases": 12,
+      "errors": 0,
+      "answerable_cases": 9,
+      "evidence_hit_rate_at_4": 1.0,
+      "mean_reciprocal_rank": 0.9166666666666666,
+      "answer_alias_match_rate": 1.0,
+      "abstention_marker_rate": 0.0,
+      "answer_checks_completed": 12
+    }
+  },
+  "manual_review": {
+    "scope": "All unanswerable answers reviewed against their fixture documents; alias matches are not semantic correctness scores.",
+    "correct_missing_information_ids": [
+      "h07",
+      "h08",
+      "h09"
+    ],
+    "unsupported_missing_information_claim_ids": [],
+    "notes": [
+      "h08 does not repeat the unsupported 900 EUR budget from assistant history.",
+      "h09 distinguishes missing results from an evaluation not happening, but adds unnecessary hypothetical explanations and mentions the rules.",
+      "h05 retrieves the supporting evidence fourth; retrieval ranking remains imperfect."
+    ]
+  }
+}

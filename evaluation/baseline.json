@@ -1,0 +1,3876 @@
+{
+  "dataset_sha256": "874fc6ed3d7d39df5f2bc5b23e3b876559fb0d92e604a4200f73dd87e2a241dd",
+  "dataset_version": 1,
+  "git_commit": "07f17ee82cc8512e0f81b16921758e636a998cac",
+  "working_tree_dirty": true,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "provider": "groq",
+  "model": "qwen/qwen3.8-27b",
+  "notes": "Answer aliases and abstention markers are heuristics; inspect raw answers. Unanswerable cases have no retrieval accuracy score.",
+  "results": [
+    {
+      "id": "q01",
+      "method": "vector",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Aurora launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.6471,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q01",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Aurora launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0165,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q01",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Aurora launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.2984,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ],
+      "answer": "Project Aurora launched on 12 March 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q02",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Aurora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.2074,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q02",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Aurora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0133,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q02",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Aurora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1884,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The reference code for Project Aurora is **AUR-214** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q03",
+      "method": "vector",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Boreal launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0915,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q03",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Boreal launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0163,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q03",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Boreal launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1048,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ],
+      "answer": "Project Boreal launched on 8 April 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q04",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Boreal?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0986,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q04",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Boreal?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0171,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q04",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Boreal?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.101,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The reference code for Project Boreal is **BOR-507** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q05",
+      "method": "vector",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Cedar launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0308,
+      "passages": [
+        {
+          "id": 1,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q05",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Cedar launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0146,
+      "passages": [
+        {
+          "id": 1,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q05",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Cedar launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0891,
+      "passages": [
+        {
+          "id": 1,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ],
+      "answer": "Project Cedar launched on 21 May 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q06",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Cedar?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.076,
+      "passages": [
+        {
+          "id": 1,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q06",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Cedar?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0181,
+      "passages": [
+        {
+          "id": 1,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q06",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Cedar?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0963,
+      "passages": [
+        {
+          "id": 1,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "04_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The reference code for Project Cedar is **CED-932** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q07",
+      "method": "vector",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Delta launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0717,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q07",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Delta launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0185,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q07",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "en",
+      "question": "When did Project Delta launch?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1024,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "Project Delta launched on 6 June 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q08",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Delta?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0664,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q08",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Delta?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0193,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q08",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "en",
+      "question": "What is the reference code for Project Delta?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0994,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The reference code for Project Delta is **DEL-681** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q09",
+      "method": "vector",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Вектор»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1296,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q09",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Вектор»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0123,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q09",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Вектор»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1076,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Проект «Вектор» был запущен 7 мая 2025 года [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q10",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Вектор»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.097,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Вектор»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0153,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Вектор»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1043,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Регистрационный код проекта «Вектор» — **VEK-315** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q11",
+      "method": "vector",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Маяк»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1054,
+      "passages": [
+        {
+          "id": 1,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Маяк»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0142,
+      "passages": [
+        {
+          "id": 1,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Маяк»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.097,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Проект «Маяк» был запущен 19 июня 2025 года [2].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q12",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Маяк»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0658,
+      "passages": [
+        {
+          "id": 1,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Маяк»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0199,
+      "passages": [
+        {
+          "id": 1,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Маяк»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.1181,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Регистрационный код проекта «Маяк» — **MAY-826** [2].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q13",
+      "method": "vector",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Орбита»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.078,
+      "passages": [
+        {
+          "id": 1,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Орбита»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0174,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Орбита»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0958,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Проект «Орбита» был запущен 3 июля 2025 года [3].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q14",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Орбита»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0689,
+      "passages": [
+        {
+          "id": 1,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "05_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Орбита»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0197,
+      "passages": [
+        {
+          "id": 1,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Орбита»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.1065,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Регистрационный код проекта «Орбита» — **ORB-409** [3].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q15",
+      "method": "vector",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Ритм»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0642,
+      "passages": [
+        {
+          "id": 1,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "05_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q15",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Ритм»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0182,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q15",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "ru",
+      "question": "Когда был запущен проект «Ритм»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.25
+      },
+      "retrieval_seconds": 0.1109,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Проект «Ритм» был запущен 14 августа 2025 года [4].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q16",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Ритм»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.068,
+      "passages": [
+        {
+          "id": 1,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "05_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q16",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Ритм»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0185,
+      "passages": [
+        {
+          "id": 1,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q16",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "ru",
+      "question": "Какой регистрационный код у проекта «Ритм»?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.25
+      },
+      "retrieval_seconds": 0.116,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Регистрационный код проекта «Ритм» — **RIT-762** [4].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q17",
+      "method": "vector",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Javor?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0928,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q17",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Javor?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0138,
+      "passages": [
+        {
+          "id": 1,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q17",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Javor?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0665,
+      "passages": [
+        {
+          "id": 1,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Projekt Javor bol spustený 18. apríla 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q18",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Javor?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0307,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q18",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Javor?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0121,
+      "passages": [
+        {
+          "id": 1,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q18",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Javor?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0653,
+      "passages": [
+        {
+          "id": 1,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Referenčný kód projektu Javor je **JAV-153** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q19",
+      "method": "vector",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Most?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0719,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q19",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Most?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0207,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "09_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q19",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Most?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.1114,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Projekt Most bol spustený 9. mája 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q20",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Most?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.069,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "09_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q20",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Most?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.017,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q20",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Most?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.07,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Referenčný kód projektu Most je **MOS-864** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q21",
+      "method": "vector",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Vlna?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.068,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q21",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Vlna?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0153,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q21",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Vlna?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0745,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Projekt Vlna bol spustený 23. júna 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q22",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Vlna?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0713,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "09_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q22",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Vlna?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0174,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "09_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q22",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Vlna?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0771,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Referenčný kód projektu Vlna je **VLN-297** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q23",
+      "method": "vector",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Zora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0624,
+      "passages": [
+        {
+          "id": 1,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q23",
+      "method": "hybrid",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Zora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0171,
+      "passages": [
+        {
+          "id": 1,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "09_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q23",
+      "method": "reranked",
+      "kind": "fact",
+      "language": "sk",
+      "question": "Kedy bol spustený projekt Zora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0678,
+      "passages": [
+        {
+          "id": 1,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Projekt Zora bol spustený 11. júla 2025 [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q24",
+      "method": "vector",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Zora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.061,
+      "passages": [
+        {
+          "id": 1,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "09_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q24",
+      "method": "hybrid",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Zora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0165,
+      "passages": [
+        {
+          "id": 1,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q24",
+      "method": "reranked",
+      "kind": "identifier",
+      "language": "sk",
+      "question": "Aký je referenčný kód projektu Zora?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 1.0
+      },
+      "retrieval_seconds": 0.0664,
+      "passages": [
+        {
+          "id": 1,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Referenčný kód projektu Zora je **ZOR-540** [1].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q25",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What was the total budget of Project Aurora?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0684,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q25",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What was the total budget of Project Aurora?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0177,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q25",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What was the total budget of Project Aurora?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0967,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Based on the provided document excerpts, the total budget for Project Aurora is not mentioned.\n\nThe guide for Project Aurora explicitly states that \"No financial results... are recorded in this guide\" [1]. Therefore, there is no information available in the context to answer this question.",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": true,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q26",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "Who was the manager of Project Boreal?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0633,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q26",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "Who was the manager of Project Boreal?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0189,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q26",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "Who was the manager of Project Boreal?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.1042,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "05_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Based on the provided document excerpts, there is no information regarding who the manager of Project Boreal was.\n\nThe text for Project Boreal [1] states that it launched on 8 April 2025, has the reference code BOR-507, and tracks a document review workflow. However, it explicitly notes that \"No financial results, staffing numbers, clinical outcomes, or personal contact details are recorded in this guide.\" Consequently, the name of the manager is not available in the provided context.",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q27",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What is the launch date of Project Nimbus?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.1816,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q27",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What is the launch date of Project Nimbus?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0148,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q27",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What is the launch date of Project Nimbus?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0448,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "01_en.md",
+          "page": null
+        }
+      ],
+      "answer": "Based on the provided document excerpts, there is no information regarding a \"Project Nimbus.\" The documents only contain details for the following projects:\n\n*   **Project Aurora** (Launched 12 March 2025) [4]\n*   **Project Boreal** (Launched 8 April 2025) [1]\n*   **Project Cedar** (Launched 21 May 2025) [3]\n*   **Project Delta** (Launched 6 June 2025) [2]\n\nTherefore, the launch date for Project Nimbus cannot be determined from the available context.",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q28",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Какой бюджет у проекта «Вектор»?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0665,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q28",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Какой бюджет у проекта «Вектор»?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0185,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q28",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Какой бюджет у проекта «Вектор»?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.1116,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "В предоставленных документах информация о бюджете проекта «Вектор» отсутствует.\n\nСогласно документу [1], в руководстве по проекту «Вектор» (как и по другим перечисленным проектам) «отсутствуют финансовые результаты». Следовательно, данные о бюджете в данном контексте не приводятся.",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q29",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Кто руководил проектом «Орбита»?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0711,
+      "passages": [
+        {
+          "id": 1,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q29",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Кто руководил проектом «Орбита»?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0192,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q29",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "ru",
+      "question": "Кто руководил проектом «Орбита»?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.101,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "В предоставленных документах отсутствует информация о том, кто руководил проектом «Орбита».\n\nВ отрывке [3] указаны только следующие данные:\n*   Дата запуска: 3 июля 2025 года.\n*   Регистрационный код: ORB-409.\n*   Общие сведения о том, что это вымышленный проект для проверки поиска, и что в руководстве отсутствуют финансовые результаты, численность команды и личные контакты.\n\nТаким образом, имя руководителя проекта в доступном контексте не упоминается.",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q30",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Aký bol rozpočet projektu Javor?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0668,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q30",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Aký bol rozpočet projektu Javor?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0187,
+      "passages": [
+        {
+          "id": 1,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q30",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Aký bol rozpočet projektu Javor?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0677,
+      "passages": [
+        {
+          "id": 1,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "12_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Na základe poskytnutých dokumentov nie je možné určiť rozpočet projektu Javor.\n\nDokument [1] explicitne uvádza, že príručka „neobsahuje finančné výsledky“ [1]. V dostupných informáciách o projekte Javor sú uvedené iba dátum spustenia (18. apríl 2025) a referenčný kód (JAV-153) [1].",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": true,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q31",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Koľko pracovníkov mal projekt Most?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.062,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q31",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Koľko pracovníkov mal projekt Most?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0185,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q31",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "sk",
+      "question": "Koľko pracovníkov mal projekt Most?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.074,
+      "passages": [
+        {
+          "id": 1,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Na základe poskytnutých informácií nie je možné určiť, koľko pracovníkov mal projekt Most.\n\nDokument explicitne uvádza, že príručka **neobsahuje počty pracovníkov** [1].",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": true,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q32",
+      "method": "vector",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What clinical benefit was measured for Project Delta?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0672,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q32",
+      "method": "hybrid",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What clinical benefit was measured for Project Delta?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0204,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q32",
+      "method": "reranked",
+      "kind": "unanswerable",
+      "language": "en",
+      "question": "What clinical benefit was measured for Project Delta?",
+      "retrieval": {
+        "hit": null,
+        "reciprocal_rank": null
+      },
+      "retrieval_seconds": 0.0723,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "Based on the provided document excerpts, **no clinical benefit was measured** for Project Delta.\n\nThe document explicitly states that \"No financial results, staffing numbers, **clinical outcomes**, or personal contact details are recorded in this guide\" [1]. Additionally, the project is described as a fictional pilot limited to \"internal knowledge lookup\" for a document review workflow [1].",
+      "answer_checks": {
+        "answer_alias_match": null,
+        "abstention_marker": false,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": null
+      }
+    },
+    {
+      "id": "q33",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "And what is its reference code?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0662,
+      "passages": [
+        {
+          "id": 1,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q33",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "And what is its reference code?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0187,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "03_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "02_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q33",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "And what is its reference code?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.25
+      },
+      "retrieval_seconds": 0.1065,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "The reference code for Project Cedar is CED-932 [4].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q34",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А какой у него регистрационный код?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0711,
+      "passages": [
+        {
+          "id": 1,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q34",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А какой у него регистрационный код?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0219,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "08_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "06_ru.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q34",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "ru",
+      "question": "А какой у него регистрационный код?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.1059,
+      "passages": [
+        {
+          "id": 1,
+          "source": "05_ru.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "06_ru.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "07_ru.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "08_ru.md",
+          "page": null
+        }
+      ],
+      "answer": "Регистрационный код проекта «Орбита» — ORB-409 [3].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q35",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A aký má referenčný kód?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0654,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q35",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A aký má referenčný kód?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0214,
+      "passages": [
+        {
+          "id": 1,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "10_sk.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q35",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "sk",
+      "question": "A aký má referenčný kód?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0762,
+      "passages": [
+        {
+          "id": 1,
+          "source": "09_sk.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "10_sk.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "11_sk.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "12_sk.md",
+          "page": null
+        }
+      ],
+      "answer": "Referenčný kód projektu Most je MOS-864 [2].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    },
+    {
+      "id": "q36",
+      "method": "vector",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "What was its launch date?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.5
+      },
+      "retrieval_seconds": 0.0683,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q36",
+      "method": "hybrid",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "What was its launch date?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0182,
+      "passages": [
+        {
+          "id": 1,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ]
+    },
+    {
+      "id": "q36",
+      "method": "reranked",
+      "kind": "follow_up",
+      "language": "en",
+      "question": "What was its launch date?",
+      "retrieval": {
+        "hit": true,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      "retrieval_seconds": 0.0578,
+      "passages": [
+        {
+          "id": 1,
+          "source": "02_en.md",
+          "page": null
+        },
+        {
+          "id": 2,
+          "source": "01_en.md",
+          "page": null
+        },
+        {
+          "id": 3,
+          "source": "04_en.md",
+          "page": null
+        },
+        {
+          "id": 4,
+          "source": "03_en.md",
+          "page": null
+        }
+      ],
+      "answer": "Project Delta launched on 6 June 2025 [3].",
+      "answer_checks": {
+        "answer_alias_match": true,
+        "abstention_marker": null,
+        "valid_reference_ids": true,
+        "expected_evidence_cited": true
+      }
+    }
+  ],
+  "summary": {
+    "vector": {
+      "cases": 36,
+      "errors": 0,
+      "answerable_cases": 28,
+      "evidence_hit_rate_at_4": 1.0,
+      "mean_reciprocal_rank": 0.880952380952381,
+      "answer_alias_match_rate": null,
+      "abstention_marker_rate": null,
+      "answer_checks_completed": 0
+    },
+    "hybrid": {
+      "cases": 36,
+      "errors": 0,
+      "answerable_cases": 28,
+      "evidence_hit_rate_at_4": 1.0,
+      "mean_reciprocal_rank": 0.8511904761904762,
+      "answer_alias_match_rate": null,
+      "abstention_marker_rate": null,
+      "answer_checks_completed": 0
+    },
+    "reranked": {
+      "cases": 36,
+      "errors": 0,
+      "answerable_cases": 28,
+      "evidence_hit_rate_at_4": 1.0,
+      "mean_reciprocal_rank": 0.7708333333333333,
+      "answer_alias_match_rate": 1.0,
+      "abstention_marker_rate": 0.375,
+      "answer_checks_completed": 36
+    }
+  },
+  "manual_review": {
+    "scope": "Eight unanswerable cases; this review is specific to this run and synthetic corpus",
+    "correct_abstentions": [
+      "q25",
+      "q26",
+      "q27",
+      "q28",
+      "q29",
+      "q30",
+      "q31"
+    ],
+    "unsupported_inferences": [
+      {
+        "id": "q32",
+        "claim": "No clinical benefit was measured for Project Delta",
+        "evidence": "No financial results, staffing numbers, clinical outcomes, or personal contact details are recorded in this guide",
+        "issue": "Absence of recorded outcomes does not establish that no benefit was measured",
+        "expected_behavior": "State that the provided context does not report a measured clinical benefit"
+      }
+    ],
+    "abstention_marker_false_negatives": [
+      "q26",
+      "q27",
+      "q28",
+      "q29"
+    ]
+  }
+}

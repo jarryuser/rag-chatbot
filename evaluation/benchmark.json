@@ -1,0 +1,589 @@
+{
+  "version": 1,
+  "documents": [
+    "01_en.md",
+    "02_en.md",
+    "03_en.md",
+    "04_en.md",
+    "05_ru.md",
+    "06_ru.md",
+    "07_ru.md",
+    "08_ru.md",
+    "09_sk.md",
+    "10_sk.md",
+    "11_sk.md",
+    "12_sk.md"
+  ],
+  "cases": [
+    {
+      "id": "q01",
+      "language": "en",
+      "kind": "fact",
+      "question": "When did Project Aurora launch?",
+      "history": [],
+      "expected_source": "01_en.md",
+      "evidence": "Project Aurora launched on 12 March 2025.",
+      "answer_aliases": [
+        [
+          "12 March 2025",
+          "March 12, 2025",
+          "2025-03-12"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q02",
+      "language": "en",
+      "kind": "identifier",
+      "question": "What is the reference code for Project Aurora?",
+      "history": [],
+      "expected_source": "01_en.md",
+      "evidence": "The reference code for Project Aurora is AUR-214.",
+      "answer_aliases": [
+        [
+          "AUR-214"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q03",
+      "language": "en",
+      "kind": "fact",
+      "question": "When did Project Boreal launch?",
+      "history": [],
+      "expected_source": "02_en.md",
+      "evidence": "Project Boreal launched on 8 April 2025.",
+      "answer_aliases": [
+        [
+          "8 April 2025",
+          "April 8, 2025",
+          "2025-04-08"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q04",
+      "language": "en",
+      "kind": "identifier",
+      "question": "What is the reference code for Project Boreal?",
+      "history": [],
+      "expected_source": "02_en.md",
+      "evidence": "The reference code for Project Boreal is BOR-507.",
+      "answer_aliases": [
+        [
+          "BOR-507"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q05",
+      "language": "en",
+      "kind": "fact",
+      "question": "When did Project Cedar launch?",
+      "history": [],
+      "expected_source": "03_en.md",
+      "evidence": "Project Cedar launched on 21 May 2025.",
+      "answer_aliases": [
+        [
+          "21 May 2025",
+          "May 21, 2025",
+          "2025-05-21"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q06",
+      "language": "en",
+      "kind": "identifier",
+      "question": "What is the reference code for Project Cedar?",
+      "history": [],
+      "expected_source": "03_en.md",
+      "evidence": "The reference code for Project Cedar is CED-932.",
+      "answer_aliases": [
+        [
+          "CED-932"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q07",
+      "language": "en",
+      "kind": "fact",
+      "question": "When did Project Delta launch?",
+      "history": [],
+      "expected_source": "04_en.md",
+      "evidence": "Project Delta launched on 6 June 2025.",
+      "answer_aliases": [
+        [
+          "6 June 2025",
+          "June 6, 2025",
+          "2025-06-06"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q08",
+      "language": "en",
+      "kind": "identifier",
+      "question": "What is the reference code for Project Delta?",
+      "history": [],
+      "expected_source": "04_en.md",
+      "evidence": "The reference code for Project Delta is DEL-681.",
+      "answer_aliases": [
+        [
+          "DEL-681"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q09",
+      "language": "ru",
+      "kind": "fact",
+      "question": "Когда был запущен проект «Вектор»?",
+      "history": [],
+      "expected_source": "05_ru.md",
+      "evidence": "Проект «Вектор» запущен 7 мая 2025 года.",
+      "answer_aliases": [
+        [
+          "7 мая 2025",
+          "07.05.2025",
+          "2025-05-07"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q10",
+      "language": "ru",
+      "kind": "identifier",
+      "question": "Какой регистрационный код у проекта «Вектор»?",
+      "history": [],
+      "expected_source": "05_ru.md",
+      "evidence": "Регистрационный код проекта «Вектор»: VEK-315.",
+      "answer_aliases": [
+        [
+          "VEK-315"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q11",
+      "language": "ru",
+      "kind": "fact",
+      "question": "Когда был запущен проект «Маяк»?",
+      "history": [],
+      "expected_source": "06_ru.md",
+      "evidence": "Проект «Маяк» запущен 19 июня 2025 года.",
+      "answer_aliases": [
+        [
+          "19 июня 2025",
+          "19.06.2025",
+          "2025-06-19"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q12",
+      "language": "ru",
+      "kind": "identifier",
+      "question": "Какой регистрационный код у проекта «Маяк»?",
+      "history": [],
+      "expected_source": "06_ru.md",
+      "evidence": "Регистрационный код проекта «Маяк»: MAY-826.",
+      "answer_aliases": [
+        [
+          "MAY-826"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q13",
+      "language": "ru",
+      "kind": "fact",
+      "question": "Когда был запущен проект «Орбита»?",
+      "history": [],
+      "expected_source": "07_ru.md",
+      "evidence": "Проект «Орбита» запущен 3 июля 2025 года.",
+      "answer_aliases": [
+        [
+          "3 июля 2025",
+          "03.07.2025",
+          "2025-07-03"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q14",
+      "language": "ru",
+      "kind": "identifier",
+      "question": "Какой регистрационный код у проекта «Орбита»?",
+      "history": [],
+      "expected_source": "07_ru.md",
+      "evidence": "Регистрационный код проекта «Орбита»: ORB-409.",
+      "answer_aliases": [
+        [
+          "ORB-409"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q15",
+      "language": "ru",
+      "kind": "fact",
+      "question": "Когда был запущен проект «Ритм»?",
+      "history": [],
+      "expected_source": "08_ru.md",
+      "evidence": "Проект «Ритм» запущен 14 августа 2025 года.",
+      "answer_aliases": [
+        [
+          "14 августа 2025",
+          "14.08.2025",
+          "2025-08-14"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q16",
+      "language": "ru",
+      "kind": "identifier",
+      "question": "Какой регистрационный код у проекта «Ритм»?",
+      "history": [],
+      "expected_source": "08_ru.md",
+      "evidence": "Регистрационный код проекта «Ритм»: RIT-762.",
+      "answer_aliases": [
+        [
+          "RIT-762"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q17",
+      "language": "sk",
+      "kind": "fact",
+      "question": "Kedy bol spustený projekt Javor?",
+      "history": [],
+      "expected_source": "09_sk.md",
+      "evidence": "Projekt Javor bol spustený 18. apríla 2025.",
+      "answer_aliases": [
+        [
+          "18. apríla 2025",
+          "18.04.2025",
+          "2025-04-18"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q18",
+      "language": "sk",
+      "kind": "identifier",
+      "question": "Aký je referenčný kód projektu Javor?",
+      "history": [],
+      "expected_source": "09_sk.md",
+      "evidence": "Referenčný kód projektu Javor je JAV-153.",
+      "answer_aliases": [
+        [
+          "JAV-153"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q19",
+      "language": "sk",
+      "kind": "fact",
+      "question": "Kedy bol spustený projekt Most?",
+      "history": [],
+      "expected_source": "10_sk.md",
+      "evidence": "Projekt Most bol spustený 9. mája 2025.",
+      "answer_aliases": [
+        [
+          "9. mája 2025",
+          "09.05.2025",
+          "2025-05-09"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q20",
+      "language": "sk",
+      "kind": "identifier",
+      "question": "Aký je referenčný kód projektu Most?",
+      "history": [],
+      "expected_source": "10_sk.md",
+      "evidence": "Referenčný kód projektu Most je MOS-864.",
+      "answer_aliases": [
+        [
+          "MOS-864"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q21",
+      "language": "sk",
+      "kind": "fact",
+      "question": "Kedy bol spustený projekt Vlna?",
+      "history": [],
+      "expected_source": "11_sk.md",
+      "evidence": "Projekt Vlna bol spustený 23. júna 2025.",
+      "answer_aliases": [
+        [
+          "23. júna 2025",
+          "23.06.2025",
+          "2025-06-23"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q22",
+      "language": "sk",
+      "kind": "identifier",
+      "question": "Aký je referenčný kód projektu Vlna?",
+      "history": [],
+      "expected_source": "11_sk.md",
+      "evidence": "Referenčný kód projektu Vlna je VLN-297.",
+      "answer_aliases": [
+        [
+          "VLN-297"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q23",
+      "language": "sk",
+      "kind": "fact",
+      "question": "Kedy bol spustený projekt Zora?",
+      "history": [],
+      "expected_source": "12_sk.md",
+      "evidence": "Projekt Zora bol spustený 11. júla 2025.",
+      "answer_aliases": [
+        [
+          "11. júla 2025",
+          "11.07.2025",
+          "2025-07-11"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q24",
+      "language": "sk",
+      "kind": "identifier",
+      "question": "Aký je referenčný kód projektu Zora?",
+      "history": [],
+      "expected_source": "12_sk.md",
+      "evidence": "Referenčný kód projektu Zora je ZOR-540.",
+      "answer_aliases": [
+        [
+          "ZOR-540"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q25",
+      "language": "en",
+      "kind": "unanswerable",
+      "question": "What was the total budget of Project Aurora?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q26",
+      "language": "en",
+      "kind": "unanswerable",
+      "question": "Who was the manager of Project Boreal?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q27",
+      "language": "en",
+      "kind": "unanswerable",
+      "question": "What is the launch date of Project Nimbus?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q28",
+      "language": "ru",
+      "kind": "unanswerable",
+      "question": "Какой бюджет у проекта «Вектор»?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q29",
+      "language": "ru",
+      "kind": "unanswerable",
+      "question": "Кто руководил проектом «Орбита»?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q30",
+      "language": "sk",
+      "kind": "unanswerable",
+      "question": "Aký bol rozpočet projektu Javor?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q31",
+      "language": "sk",
+      "kind": "unanswerable",
+      "question": "Koľko pracovníkov mal projekt Most?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q32",
+      "language": "en",
+      "kind": "unanswerable",
+      "question": "What clinical benefit was measured for Project Delta?",
+      "history": [],
+      "expected_source": null,
+      "evidence": null,
+      "answer_aliases": [],
+      "answerable": false
+    },
+    {
+      "id": "q33",
+      "language": "en",
+      "kind": "follow_up",
+      "question": "And what is its reference code?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me about project Cedar."
+        },
+        {
+          "role": "assistant",
+          "content": "The document describes project Cedar."
+        }
+      ],
+      "expected_source": "03_en.md",
+      "evidence": "The reference code for Project Cedar is CED-932.",
+      "answer_aliases": [
+        [
+          "CED-932"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q34",
+      "language": "ru",
+      "kind": "follow_up",
+      "question": "А какой у него регистрационный код?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me about project Орбита."
+        },
+        {
+          "role": "assistant",
+          "content": "The document describes project Орбита."
+        }
+      ],
+      "expected_source": "07_ru.md",
+      "evidence": "Регистрационный код проекта «Орбита»: ORB-409.",
+      "answer_aliases": [
+        [
+          "ORB-409"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q35",
+      "language": "sk",
+      "kind": "follow_up",
+      "question": "A aký má referenčný kód?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me about project Most."
+        },
+        {
+          "role": "assistant",
+          "content": "The document describes project Most."
+        }
+      ],
+      "expected_source": "10_sk.md",
+      "evidence": "Referenčný kód projektu Most je MOS-864.",
+      "answer_aliases": [
+        [
+          "MOS-864"
+        ]
+      ],
+      "answerable": true
+    },
+    {
+      "id": "q36",
+      "language": "en",
+      "kind": "follow_up",
+      "question": "What was its launch date?",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me about project Delta."
+        },
+        {
+          "role": "assistant",
+          "content": "The document describes project Delta."
+        }
+      ],
+      "expected_source": "04_en.md",
+      "evidence": "Project Delta launched on 6 June 2025.",
+      "answer_aliases": [
+        [
+          "6 June 2025",
+          "June 6, 2025",
+          "2025-06-06"
+        ]
+      ],
+      "answerable": true
+    }
+  ]
+}
